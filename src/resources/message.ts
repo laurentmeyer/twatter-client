@@ -1,5 +1,7 @@
+import axios from 'axios'
+import { useSession } from 'next-auth/react'
 import { useQuery } from 'react-query'
-import { fetchAPI } from '../../lib/api'
+import { getStrapiURL } from '../../lib/api'
 
 interface Payload {
   id: number
@@ -18,11 +20,22 @@ const payloadToResource = (data: Payload): MessageResource => ({
   text: data.attributes.text,
 })
 
-const fetchMessages = (): Promise<MessageResource[]> =>
-  fetchAPI('/messages', { populate: '*' }).then((response) =>
-    response.data.map(payloadToResource)
-  )
+const fetchMessages = async (jwt?: string) => {
+  const {
+    data: { data },
+    status,
+  } = await axios.get(getStrapiURL('/api/messages'), {
+    params: { populate: '*' },
+    headers: { Authorization: `Bearer ${jwt}` },
+  })
+
+  console.log('status', status)
+
+  return status === 200 ? data.map(payloadToResource) : []
+}
 
 export function useMessages() {
-  return useQuery(['messages'], fetchMessages)
+  const { data: session } = useSession()
+
+  return useQuery(['messages', session], () => fetchMessages(session?.jwt))
 }
