@@ -1,14 +1,16 @@
 import { MessageResource } from '../resources/message'
 import { Message } from './message'
 
-interface MessageListProps {
+export const MessageList = (props: {
   messages: ReadonlyArray<MessageResource>
-}
+}) => {
+  const { messages } = props
 
-export const MessageList = ({ messages }: MessageListProps) => (
-  <ul>
-    {messages.map((message) => (
-      <Message text={message.text} key={message.id} />
-    ))}
-  </ul>
-)
+  return (
+    <ul>
+      {messages.map((message) => (
+        <Message key={message.id} message={message} />
+      ))}
+    </ul>
+  )
+}
