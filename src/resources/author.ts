@@ -10,6 +10,10 @@ export interface AuthorPayload {
   id: number
   attributes: {
     handle: string
+    firstName: string
+    lastName: string
+    description?: string
+    followersCount?: number
     image?: {
       data: ImagePayload
     }
@@ -19,7 +23,11 @@ export interface AuthorPayload {
 export interface AuthorResource {
   id: number
   handle: string
+  firstName: string
+  lastName: string
   image?: ImageResource
+  description?: string
+  followersCount?: number
 }
 
 /*
@@ -29,15 +37,17 @@ export interface AuthorResource {
 export const authorPayloadToResource = (
   data: AuthorPayload
 ): AuthorResource => {
-  const maybeImageData = data.attributes.image?.data
-  const maybeImage = maybeImageData && {
-    image: imagePayloadToResource(maybeImageData),
-  }
+  const { handle, firstName, lastName, description, followersCount, image } =
+    data.attributes
 
   return {
     id: data.id,
-    handle: data.attributes.handle,
-    ...maybeImage,
+    handle,
+    firstName,
+    lastName,
+    description,
+    followersCount,
+    image: image?.data && imagePayloadToResource(image.data),
   }
 }
 
@@ -57,3 +67,10 @@ export const fetchAuthorAsync = async (id: number, jwt?: string) => {
 
   return status === 200 ? authorPayloadToResource(data) : undefined
 }
+
+export const makeUnknownAuthor = (): AuthorResource => ({
+  firstName: 'Unknown',
+  lastName: 'Unknown',
+  handle: 'unknown',
+  id: -1,
+})
