@@ -37,8 +37,8 @@ export interface MessageResource {
   text: string
   time: DateTime
   isPublic: boolean
-  likesCount?: number
-  repliesCount?: number
+  likesCount: number
+  repliesCount: number
   author: AuthorResource
   image?: ImageResource
 }
@@ -66,8 +66,8 @@ const messagePayloadToResource = (data: MessagePayload): MessageResource => {
     text,
     isPublic,
     time: DateTime.fromISO(time),
-    likesCount,
-    repliesCount,
+    likesCount: likesCount ?? 0,
+    repliesCount: repliesCount ?? 0,
     image: image?.data && imagePayloadToResource(image.data),
     author: authorData
       ? authorPayloadToResource(authorData)
