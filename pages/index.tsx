@@ -3,19 +3,14 @@ import { MessageList } from '../src/components/messageList'
 import { useMessages } from '../src/resources/message'
 
 const Home: NextPage = () => {
-  const { data, status } = useMessages()
+  const { data, status: messagesStatus } = useMessages()
 
-  switch (status) {
-    case 'loading':
-      return <>{'Loading...'}</>
+  if (messagesStatus === 'loading') return <>{'Loading ...'}</>
 
-    case 'success':
-      return <MessageList messages={data} />
+  if (messagesStatus === 'error' || messagesStatus === 'idle')
+    return <>{'Error'}</>
 
-    case 'error':
-    default:
-      return <>{'Error'}</>
-  }
+  return <MessageList messages={data} />
 }
 
 export default Home

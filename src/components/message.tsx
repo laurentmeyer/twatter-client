@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import Image from 'next/image'
 import { DateTime } from 'luxon'
 import SvgIcon from './svgIcon'
+import Link from 'next/link'
 
 /*
  * Types.
@@ -16,9 +17,8 @@ interface Props {
  * Styles.
  */
 
-const StyledWrapper = styled.div`
+const StyledMessageWrapper = styled.div`
   display: flex;
-  max-width: 640px;
   padding: 10px 15px;
 `
 
@@ -34,7 +34,7 @@ const StyledMetadataDiv = styled.div`
   display: flex;
 `
 
-const StyledAuthorNameDiv = styled.div`
+const StyledAuthorNameLink = styled(Link)`
   font-size: 15px;
   font-weight: 700;
   margin-right: 8px;
@@ -57,11 +57,11 @@ const StyledMessageDiv = styled.div``
 
 const StyledIconsDiv = styled.div`
   display: flex;
-  justify-content: space-between;
+  /* grid-column-gap: 12px; */
+  justify-content: space-around;
 `
 
 const StyledIconWrapper = styled.div`
-  display: flex;
   align-items: center;
 `
 
@@ -91,7 +91,7 @@ export const Message = ({ message }: Props) => {
   const imageUrl = author?.image?.url ?? '/empty.jpeg'
 
   return (
-    <StyledWrapper>
+    <StyledMessageWrapper>
       <StyledImageDiv>
         <Image
           style={imageStyle}
@@ -103,7 +103,10 @@ export const Message = ({ message }: Props) => {
       </StyledImageDiv>
       <StyledContentDiv>
         <StyledMetadataDiv>
-          <StyledAuthorNameDiv>{`${author.firstName} ${author.lastName}`}</StyledAuthorNameDiv>
+          <StyledAuthorNameLink href={`/authors/${author.id}`}>
+            <a>{`${author.firstName} ${author.lastName}`}</a>
+          </StyledAuthorNameLink>
+
           <StyledAuthorHandleDiv>{`@${author.handle}`}</StyledAuthorHandleDiv>
           <StyledTimeDiv>
             {message.time.toLocaleString(DateTime.TIME_SIMPLE)}
@@ -131,6 +134,6 @@ export const Message = ({ message }: Props) => {
           </StyledIconWrapper>
         </StyledIconsDiv>
       </StyledContentDiv>
-    </StyledWrapper>
+    </StyledMessageWrapper>
   )
 }

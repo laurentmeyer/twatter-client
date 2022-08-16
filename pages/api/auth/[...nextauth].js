@@ -37,7 +37,6 @@ export default NextAuth({
           return null
         }
 
-        data.user.name = data.user.username
         data.user.jwt = data.jwt
         return data
       },
@@ -59,6 +58,7 @@ export default NextAuth({
 
     async session({ session, token }) {
       session.user.username = token.user.user.username
+      session.user.id = token.user.user.id
       session.jwt = token.user.jwt
       return session
     },

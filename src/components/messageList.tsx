@@ -7,10 +7,10 @@ export const MessageList = (props: {
   const { messages } = props
 
   return (
-    <ul>
+    <>
       {messages.map((message) => (
         <Message key={message.id} message={message} />
       ))}
-    </ul>
+    </>
   )
 }

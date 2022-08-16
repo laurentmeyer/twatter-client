@@ -11,14 +11,12 @@ export const Author = ({ author }: Props) => {
   return (
     <>
       {handle}
-      {image && (
-        <Image
-          src={image.url}
-          alt={image.alternativeText}
-          width={'400px'}
-          height={'400px'}
-        />
-      )}
+      <Image
+        src={image?.url ?? '/empty.jpeg'}
+        alt={image?.alternativeText ?? handle}
+        width={'400px'}
+        height={'400px'}
+      />
     </>
   )
 }

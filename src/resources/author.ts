@@ -62,9 +62,6 @@ export const fetchAuthorAsync = async (id: number, jwt?: string) => {
     headers: { Authorization: `Bearer ${jwt}` },
   })
 
-  // TODO remove
-  console.log('author data', data)
-
   return status === 200 ? authorPayloadToResource(data) : undefined
 }
 
