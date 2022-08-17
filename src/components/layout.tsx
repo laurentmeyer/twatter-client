@@ -23,8 +23,6 @@ export default function Layout(args: { children: ReactNode }) {
     fetchMeAsync(sessionData?.jwt)
   )
 
-  console.log('user data', userData)
-
   if (sessionStatus === 'loading') return <>{'Loading ...'}</>
 
   if (sessionStatus === 'unauthenticated')

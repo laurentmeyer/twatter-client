@@ -1,4 +1,5 @@
 import type { NextPage } from 'next'
+import { MessageForm } from '../src/components/messageForm'
 import { MessageList } from '../src/components/messageList'
 import { useMessages } from '../src/resources/message'
 
@@ -10,7 +11,12 @@ const Home: NextPage = () => {
   if (messagesStatus === 'error' || messagesStatus === 'idle')
     return <>{'Error'}</>
 
-  return <MessageList messages={data} />
+  return (
+    <>
+      <MessageForm />
+      <MessageList messages={data} />
+    </>
+  )
 }
 
 export default Home
