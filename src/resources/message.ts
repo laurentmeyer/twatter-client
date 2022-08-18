@@ -1,19 +1,35 @@
 import axios from 'axios'
 import { DateTime } from 'luxon'
-import { useSession } from 'next-auth/react'
-import { useQuery } from 'react-query'
 import { getStrapiURL } from '../../lib/api'
 import {
   AuthorPayload,
+  AuthorPayloadFlat,
+  authorPayloadFlatToResource,
   authorPayloadToResource,
   AuthorResource,
-  makeUnknownAuthor,
 } from './author'
-import { ImagePayload, imagePayloadToResource, ImageResource } from './image'
+import {
+  ImagePayload,
+  ImagePayloadFlat,
+  imagePayloadFlatToResource,
+  imagePayloadToResource,
+  ImageResource,
+} from './image'
 
 /*
  * Types.
  */
+
+export interface MessagePayloadFlat {
+  id: number
+  text: string
+  time: string
+  public: boolean
+  likesCount?: number
+  repliesCount?: number
+  author: AuthorPayloadFlat | null
+  image?: ImagePayloadFlat
+}
 
 interface MessagePayload {
   id: number
@@ -47,7 +63,37 @@ export interface MessageResource {
  * Helpers.
  */
 
-const messagePayloadToResource = (data: MessagePayload): MessageResource => {
+export const messagePayloadFlatToResource = (
+  data: MessagePayloadFlat
+): MessageResource => {
+  const {
+    id,
+    author,
+    public: isPublic,
+    text,
+    time,
+    image,
+    likesCount,
+    repliesCount,
+  } = data
+
+  if (!author) throw new Error(`Message ${id} has no author`)
+
+  return {
+    id,
+    text,
+    isPublic,
+    time: DateTime.fromISO(time),
+    likesCount: likesCount ?? 0,
+    repliesCount: repliesCount ?? 0,
+    image: image && imagePayloadFlatToResource(image),
+    author: authorPayloadFlatToResource(author),
+  }
+}
+
+export const messagePayloadToResource = (
+  data: MessagePayload
+): MessageResource => {
   const {
     author,
     public: isPublic,
@@ -59,7 +105,7 @@ const messagePayloadToResource = (data: MessagePayload): MessageResource => {
   } = data.attributes
   const { data: authorData } = author
 
-  if (!authorData) console.error(`Message ${data.id} has no author`)
+  if (!authorData) throw new Error(`Message ${data.id} has no author`)
 
   return {
     id: data.id,
@@ -69,9 +115,7 @@ const messagePayloadToResource = (data: MessagePayload): MessageResource => {
     likesCount: likesCount ?? 0,
     repliesCount: repliesCount ?? 0,
     image: image?.data && imagePayloadToResource(image.data),
-    author: authorData
-      ? authorPayloadToResource(authorData)
-      : makeUnknownAuthor(),
+    author: authorPayloadToResource(authorData),
   }
 }
 
@@ -89,26 +133,16 @@ export const fetchMessageAsync = async (id: number, jwt?: string) => {
   return status === 200 ? messagePayloadToResource(data) : undefined
 }
 
-const fetchMessagesAsync = async (jwt?: string) => {
+export const fetchMessagesAsync = async (jwt?: string) => {
   const {
     data: { data },
     status,
   } = await axios.get(
-    getStrapiURL('/api/messages?populate[author][populate]=%2A'),
+    getStrapiURL('/api/messages?populate[author][populate]=*&sort=time:desc'),
     {
       headers: { Authorization: `Bearer ${jwt}` },
     }
   )
 
   return status === 200 ? data.map(messagePayloadToResource) : []
-}
-
-/*
- * Hooks.
- */
-
-export function useMessages() {
-  const { data: session } = useSession()
-
-  return useQuery(['messages', session], () => fetchMessagesAsync(session?.jwt))
 }

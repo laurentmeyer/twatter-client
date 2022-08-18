@@ -12,6 +12,7 @@
   "dependencies": {
     "@types/styled-components": "5.1.26",
     "@types/luxon": "3.0.0",
+    "@harelpls/use-pusher": "7.2.1",
     "axios": "0.27.2",
     "luxon": "3.0.1",
     "next": "12.2.2",

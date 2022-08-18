@@ -1,19 +1,18 @@
 import axios from 'axios'
 import { useSession } from 'next-auth/react'
 import { getStrapiURL } from '../../lib/api'
+import { useCurrentUser } from '../resources/user'
 
 export const MessageForm = () => {
   const { status: sessionStatus, data: sessionData } = useSession()
+  const { data: userData } = useCurrentUser(sessionData?.jwt)
 
   if (sessionStatus !== 'authenticated') return <>{'Loading...'}</>
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-
-    const { id } = sessionData.user
-
     const data = {
-      author: id,
+      author: userData?.author.id,
       time: '14:42:18.543',
       text: '',
     }
@@ -34,17 +33,9 @@ export const MessageForm = () => {
 
     formData.append('data', JSON.stringify(data))
 
-    console.log(formData)
-
-    const response = await axios.post(
-      getStrapiURL(`/api/messages/`),
-      formData,
-      {
-        headers: { Authorization: `Bearer ${sessionData?.jwt}` },
-      }
-    )
-
-    console.log('response', response)
+    await axios.post(getStrapiURL(`/api/messages/`), formData, {
+      headers: { Authorization: `Bearer ${sessionData?.jwt}` },
+    })
   }
 
   return (

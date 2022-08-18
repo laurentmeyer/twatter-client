@@ -9,7 +9,7 @@ const AuthorPage = () => {
   const router = useRouter()
   const { id } = router.query
 
-  const { data: author, status } = useQuery(['author', session, id], () =>
+  const { data: author, status } = useQuery(['authors', id], () =>
     fetchAuthorAsync(Number(id), session?.jwt)
   )
 

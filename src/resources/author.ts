@@ -1,10 +1,26 @@
 import axios from 'axios'
 import { getStrapiURL } from '../../lib/api'
-import { ImagePayload, ImageResource, imagePayloadToResource } from './image'
+import {
+  ImagePayload,
+  ImageResource,
+  imagePayloadToResource,
+  ImagePayloadFlat,
+  imagePayloadFlatToResource,
+} from './image'
 
 /*
  * Types.
  */
+
+export interface AuthorPayloadFlat {
+  id: number
+  handle: string
+  firstName: string
+  lastName: string
+  description?: string
+  followersCount?: number
+  image?: ImagePayloadFlat
+}
 
 export interface AuthorPayload {
   id: number
@@ -33,6 +49,23 @@ export interface AuthorResource {
 /*
  * Helpers.
  */
+
+export const authorPayloadFlatToResource = (
+  data: AuthorPayloadFlat
+): AuthorResource => {
+  const { handle, firstName, lastName, description, followersCount, image } =
+    data
+
+  return {
+    id: data.id,
+    handle,
+    firstName,
+    lastName,
+    description,
+    followersCount,
+    image: image && imagePayloadFlatToResource(image),
+  }
+}
 
 export const authorPayloadToResource = (
   data: AuthorPayload
@@ -64,10 +97,3 @@ export const fetchAuthorAsync = async (id: number, jwt?: string) => {
 
   return status === 200 ? authorPayloadToResource(data) : undefined
 }
-
-export const makeUnknownAuthor = (): AuthorResource => ({
-  firstName: 'Unknown',
-  lastName: 'Unknown',
-  handle: 'unknown',
-  id: -1,
-})

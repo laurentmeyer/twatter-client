@@ -1,7 +1,6 @@
 import { ReactNode } from 'react'
 import { signOut, useSession } from 'next-auth/react'
-import { useQuery } from 'react-query'
-import { fetchMeAsync } from '../resources/user'
+import { useCurrentUser } from '../resources/user'
 import Link from 'next/link'
 import styled from 'styled-components'
 
@@ -18,10 +17,7 @@ const StyledTempContainer = styled.div`
 
 export default function Layout(args: { children: ReactNode }) {
   const { status: sessionStatus, data: sessionData } = useSession()
-
-  const { data: userData } = useQuery(['user', sessionData?.user], async () =>
-    fetchMeAsync(sessionData?.jwt)
-  )
+  const { data: userData } = useCurrentUser(sessionData?.jwt)
 
   if (sessionStatus === 'loading') return <>{'Loading ...'}</>
 

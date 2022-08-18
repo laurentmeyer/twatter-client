@@ -9,7 +9,7 @@ const MessagePage = () => {
   const router = useRouter()
   const { id } = router.query
 
-  const { data: message, status } = useQuery(['message', session, id], () =>
+  const { data: message, status } = useQuery(['messages', id], () =>
     fetchMessageAsync(Number(id), session?.jwt)
   )
 
