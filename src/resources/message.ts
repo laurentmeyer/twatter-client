@@ -1,18 +1,16 @@
 import axios from 'axios'
 import { DateTime } from 'luxon'
+import { useSession } from 'next-auth/react'
+import { useQuery } from 'react-query'
 import { getStrapiURL } from '../../lib/api'
 import {
   AuthorPayload,
-  AuthorPayloadFlat,
-  authorPayloadFlatToResource,
   authorPayloadToResource,
   AuthorResource,
 } from './author'
 import {
-  ImagePayload,
   ImagePayloadFlat,
   imagePayloadFlatToResource,
-  imagePayloadToResource,
   ImageResource,
 } from './image'
 
@@ -20,32 +18,15 @@ import {
  * Types.
  */
 
-export interface MessagePayloadFlat {
+export interface MessagePayload {
   id: number
   text: string
   time: string
   public: boolean
   likesCount?: number
   repliesCount?: number
-  author: AuthorPayloadFlat | null
+  author: AuthorPayload | null
   image?: ImagePayloadFlat
-}
-
-interface MessagePayload {
-  id: number
-  attributes: {
-    text: string
-    time: string
-    public: boolean
-    likesCount?: number
-    repliesCount?: number
-    author: {
-      data: AuthorPayload | null
-    }
-    image?: {
-      data: ImagePayload
-    }
-  }
 }
 
 export interface MessageResource {
@@ -63,8 +44,8 @@ export interface MessageResource {
  * Helpers.
  */
 
-export const messagePayloadFlatToResource = (
-  data: MessagePayloadFlat
+export const messagePayloadToResource = (
+  data: MessagePayload
 ): MessageResource => {
   const {
     id,
@@ -87,62 +68,48 @@ export const messagePayloadFlatToResource = (
     likesCount: likesCount ?? 0,
     repliesCount: repliesCount ?? 0,
     image: image && imagePayloadFlatToResource(image),
-    author: authorPayloadFlatToResource(author),
+    author: authorPayloadToResource(author),
   }
 }
 
-export const messagePayloadToResource = (
-  data: MessagePayload
-): MessageResource => {
-  const {
-    author,
-    public: isPublic,
-    text,
-    time,
-    image,
-    likesCount,
-    repliesCount,
-  } = data.attributes
-  const { data: authorData } = author
+/*
+ * Hooks.
+ */
 
-  if (!authorData) throw new Error(`Message ${data.id} has no author`)
+export const useMessage = (id: number) => {
+  // Should be a valid session, already checked by layout
+  const { data: session } = useSession()
 
-  return {
-    id: data.id,
-    text,
-    isPublic,
-    time: DateTime.fromISO(time),
-    likesCount: likesCount ?? 0,
-    repliesCount: repliesCount ?? 0,
-    image: image?.data && imagePayloadToResource(image.data),
-    author: authorPayloadToResource(authorData),
+  const fetchMessageAsync = async () => {
+    const { data, status } = await axios.get(
+      getStrapiURL(`/api/messages/${id}`),
+      {
+        headers: { Authorization: `Bearer ${session?.jwt}` },
+      }
+    )
+
+    return status === 200 ? messagePayloadToResource(data) : undefined
   }
+
+  return useQuery(['messages', id], fetchMessageAsync, {
+    enabled: Number.isFinite(id),
+  })
 }
 
-export const fetchMessageAsync = async (id: number, jwt?: string) => {
-  const {
-    data: { data },
-    status,
-  } = await axios.get(
-    getStrapiURL(`/api/messages/${id}?populate[author][populate]=%2A`),
-    {
-      headers: { Authorization: `Bearer ${jwt}` },
-    }
-  )
+export const useMessages = () => {
+  // Should be a valid session, already checked by layout
+  const { data: session } = useSession()
 
-  return status === 200 ? messagePayloadToResource(data) : undefined
-}
+  const fetchMessagesAsync = async () => {
+    const { data, status } = await axios.get(
+      getStrapiURL('/api/messages?sort=time:desc'),
+      {
+        headers: { Authorization: `Bearer ${session?.jwt}` },
+      }
+    )
 
-export const fetchMessagesAsync = async (jwt?: string) => {
-  const {
-    data: { data },
-    status,
-  } = await axios.get(
-    getStrapiURL('/api/messages?populate[author][populate]=*&sort=time:desc'),
-    {
-      headers: { Authorization: `Bearer ${jwt}` },
-    }
-  )
+    return status === 200 ? data.map(messagePayloadToResource) : []
+  }
 
-  return status === 200 ? data.map(messagePayloadToResource) : []
+  return useQuery(['messages', 'list'], fetchMessagesAsync)
 }

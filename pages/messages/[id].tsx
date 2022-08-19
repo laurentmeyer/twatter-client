@@ -1,17 +1,12 @@
-import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
-import { useQuery } from 'react-query'
-import { fetchMessageAsync } from '../../src/resources/message'
 import { Message } from '../../src/components/message'
+import { useMessage } from '../../src/resources/message'
 
 const MessagePage = () => {
-  const { data: session } = useSession()
   const router = useRouter()
-  const { id } = router.query
+  const id = Number(router.query.id)
 
-  const { data: message, status } = useQuery(['messages', id], () =>
-    fetchMessageAsync(Number(id), session?.jwt)
-  )
+  const { data: message, status } = useMessage(id)
 
   switch (status) {
     case 'success':
@@ -25,8 +20,10 @@ const MessagePage = () => {
       return <>Idle</>
 
     case 'error':
-    default:
       return <>Error</>
+
+    default:
+      throw new Error('Unreachable code')
   }
 }
 

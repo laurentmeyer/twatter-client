@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { DateTime } from 'luxon'
 import { useSession } from 'next-auth/react'
 import { getStrapiURL } from '../../lib/api'
 import { useCurrentUser } from '../resources/user'
@@ -13,13 +14,11 @@ export const MessageForm = () => {
     e.preventDefault()
     const data = {
       author: userData?.author.id,
-      time: '14:42:18.543',
+      time: DateTime.now().toLocaleString(DateTime.TIME_24_WITH_SECONDS),
       text: '',
     }
 
     const formData = new FormData()
-
-    e.currentTarget.text
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     for (const { name, type, value, files } of e.target as any) {

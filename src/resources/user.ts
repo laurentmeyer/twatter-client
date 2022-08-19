@@ -1,8 +1,11 @@
 import axios from 'axios'
 import { useQuery } from 'react-query'
 import { getStrapiURL } from '../../lib/api'
-import { authorPayloadToResource, AuthorResource } from './author'
-import { ImagePayload } from './image'
+import {
+  AuthorPayload,
+  authorPayloadToResource,
+  AuthorResource,
+} from './author'
 
 /*
  * Types.
@@ -12,17 +15,7 @@ export interface UserPayload {
   id: number
   username: string
   email: string
-  author?: {
-    id: number
-    handle: string
-    firstName: string
-    lastName: string
-    description?: string
-    followersCount?: number
-    image?: {
-      data: ImagePayload
-    }
-  }
+  author?: AuthorPayload
 }
 
 export interface UserResource {
@@ -37,20 +30,15 @@ export interface UserResource {
  */
 
 export const userPayloadToResource = (data: UserPayload): UserResource => {
-  const { author, email, username } = data
+  const { author, email, username, id } = data
 
   if (!author) throw new Error(`User ${data.id} has no author`)
-
-  const { id, ...attributes } = author
 
   return {
     id,
     username,
     email,
-    author: authorPayloadToResource({
-      id,
-      attributes,
-    }),
+    author: authorPayloadToResource(author),
   }
 }
 

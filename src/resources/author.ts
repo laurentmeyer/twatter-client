@@ -1,9 +1,9 @@
 import axios from 'axios'
+import { useSession } from 'next-auth/react'
+import { useQuery } from 'react-query'
 import { getStrapiURL } from '../../lib/api'
 import {
-  ImagePayload,
   ImageResource,
-  imagePayloadToResource,
   ImagePayloadFlat,
   imagePayloadFlatToResource,
 } from './image'
@@ -12,7 +12,7 @@ import {
  * Types.
  */
 
-export interface AuthorPayloadFlat {
+export interface AuthorPayload {
   id: number
   handle: string
   firstName: string
@@ -20,20 +20,6 @@ export interface AuthorPayloadFlat {
   description?: string
   followersCount?: number
   image?: ImagePayloadFlat
-}
-
-export interface AuthorPayload {
-  id: number
-  attributes: {
-    handle: string
-    firstName: string
-    lastName: string
-    description?: string
-    followersCount?: number
-    image?: {
-      data: ImagePayload
-    }
-  }
 }
 
 export interface AuthorResource {
@@ -50,8 +36,8 @@ export interface AuthorResource {
  * Helpers.
  */
 
-export const authorPayloadFlatToResource = (
-  data: AuthorPayloadFlat
+export const authorPayloadToResource = (
+  data: AuthorPayload
 ): AuthorResource => {
   const { handle, firstName, lastName, description, followersCount, image } =
     data
@@ -67,33 +53,26 @@ export const authorPayloadFlatToResource = (
   }
 }
 
-export const authorPayloadToResource = (
-  data: AuthorPayload
-): AuthorResource => {
-  const { handle, firstName, lastName, description, followersCount, image } =
-    data.attributes
+/*
+ * Hooks.
+ */
 
-  return {
-    id: data.id,
-    handle,
-    firstName,
-    lastName,
-    description,
-    followersCount,
-    image: image?.data && imagePayloadToResource(image.data),
+export const useAuthor = (id: number) => {
+  // Should be a valid session, already checked by layout
+  const { data: session } = useSession()
+
+  const fetchAuthorAsync = async () => {
+    const { data, status } = await axios.get(
+      getStrapiURL(`/api/authors/${id}`),
+      {
+        headers: { Authorization: `Bearer ${session?.jwt}` },
+      }
+    )
+
+    return status === 200 ? authorPayloadToResource(data) : undefined
   }
-}
 
-export const fetchAuthorAsync = async (id: number, jwt?: string) => {
-  const {
-    data: { data },
-    status,
-  } = await axios.get(getStrapiURL(`/api/authors/${id}`), {
-    params: {
-      populate: '*',
-    },
-    headers: { Authorization: `Bearer ${jwt}` },
+  return useQuery(['authors', id], fetchAuthorAsync, {
+    enabled: Number.isFinite(id),
   })
-
-  return status === 200 ? authorPayloadToResource(data) : undefined
 }

@@ -1,17 +1,12 @@
-import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
-import { useQuery } from 'react-query'
 import { Author } from '../../src/components/author'
-import { fetchAuthorAsync } from '../../src/resources/author'
+import { useAuthor } from '../../src/resources/author'
 
 const AuthorPage = () => {
-  const { data: session } = useSession()
   const router = useRouter()
-  const { id } = router.query
+  const id = Number(router.query.id)
 
-  const { data: author, status } = useQuery(['authors', id], () =>
-    fetchAuthorAsync(Number(id), session?.jwt)
-  )
+  const { data: author, status } = useAuthor(id)
 
   switch (status) {
     case 'success':
