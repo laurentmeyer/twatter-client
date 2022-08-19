@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { DateTime } from 'luxon'
+import { DateTime, Duration } from 'luxon'
 import { useSession } from 'next-auth/react'
 import { useQuery } from 'react-query'
 import { getStrapiURL } from '../../lib/api'
@@ -13,6 +13,11 @@ import {
   imagePayloadFlatToResource,
   ImageResource,
 } from './image'
+import {
+  MILLISECONDS_PER_MINUTE,
+  MILLISECONDS_PER_SECOND,
+  useMinutesLate,
+} from './time'
 
 /*
  * Types.
@@ -44,8 +49,9 @@ export interface MessageResource {
  * Helpers.
  */
 
-export const messagePayloadToResource = (
-  data: MessagePayload
+const messagePayloadToResource = (
+  data: MessagePayload,
+  minutesLate: number
 ): MessageResource => {
   const {
     id,
@@ -64,7 +70,9 @@ export const messagePayloadToResource = (
     id,
     text,
     isPublic,
-    time: DateTime.fromISO(time),
+    time: DateTime.fromISO(time).plus(
+      Duration.fromMillis(MILLISECONDS_PER_MINUTE * minutesLate)
+    ),
     likesCount: likesCount ?? 0,
     repliesCount: repliesCount ?? 0,
     image: image && imagePayloadFlatToResource(image),
@@ -79,6 +87,7 @@ export const messagePayloadToResource = (
 export const useMessage = (id: number) => {
   // Should be a valid session, already checked by layout
   const { data: session } = useSession()
+  const { data: minutesLate } = useMinutesLate()
 
   const fetchMessageAsync = async () => {
     const { data, status } = await axios.get(
@@ -88,17 +97,20 @@ export const useMessage = (id: number) => {
       }
     )
 
-    return status === 200 ? messagePayloadToResource(data) : undefined
+    return status === 200
+      ? messagePayloadToResource(data, minutesLate)
+      : undefined
   }
 
   return useQuery(['messages', id], fetchMessageAsync, {
-    enabled: Number.isFinite(id),
+    enabled: Number.isFinite(id) && minutesLate !== undefined,
   })
 }
 
 export const useMessages = () => {
   // Should be a valid session, already checked by layout
   const { data: session } = useSession()
+  const { data: minutesLate } = useMinutesLate()
 
   const fetchMessagesAsync = async () => {
     const { data, status } = await axios.get(
@@ -108,8 +120,19 @@ export const useMessages = () => {
       }
     )
 
-    return status === 200 ? data.map(messagePayloadToResource) : []
+    return status === 200
+      ? data.map((payload: MessagePayload) =>
+          messagePayloadToResource(payload, minutesLate)
+        )
+      : []
   }
 
-  return useQuery(['messages', 'list'], fetchMessagesAsync)
+  return useQuery<ReadonlyArray<MessageResource>>(
+    ['messages', 'list'],
+    fetchMessagesAsync,
+    {
+      refetchInterval: 15 * MILLISECONDS_PER_SECOND,
+      enabled: minutesLate !== undefined,
+    }
+  )
 }

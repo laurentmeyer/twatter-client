@@ -4,6 +4,7 @@ import { MessageForm } from '../src/components/messageForm'
 import { MessageList } from '../src/components/messageList'
 import { useMessages } from '../src/resources/message'
 import { useChannel, useEvent } from '@harelpls/use-pusher'
+import { DateTime } from 'luxon'
 
 const Home: NextPage = () => {
   const { data: messages, status: status } = useMessages()
@@ -19,10 +20,14 @@ const Home: NextPage = () => {
     case 'success': {
       if (!messages) throw new Error('Cannot fetch author')
 
+      const pastMessages = messages.filter(
+        (message) => message.time <= DateTime.now()
+      )
+
       return (
         <>
           <MessageForm />
-          <MessageList messages={messages} />
+          <MessageList messages={pastMessages} />
         </>
       )
     }

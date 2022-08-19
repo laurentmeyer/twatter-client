@@ -1,20 +1,22 @@
 import axios from 'axios'
-import { DateTime } from 'luxon'
+import { DateTime, Duration } from 'luxon'
 import { useSession } from 'next-auth/react'
 import { getStrapiURL } from '../../lib/api'
+import { MILLISECONDS_PER_MINUTE, useMinutesLate } from '../resources/time'
 import { useCurrentUser } from '../resources/user'
 
 export const MessageForm = () => {
-  const { status: sessionStatus, data: sessionData } = useSession()
+  const { data: sessionData } = useSession()
   const { data: userData } = useCurrentUser(sessionData?.jwt)
-
-  if (sessionStatus !== 'authenticated') return <>{'Loading...'}</>
+  const { data: minutesLate } = useMinutesLate()
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const data = {
       author: userData?.author.id,
-      time: DateTime.now().toLocaleString(DateTime.TIME_24_WITH_SECONDS),
+      time: DateTime.now()
+        .minus(Duration.fromMillis(MILLISECONDS_PER_MINUTE * minutesLate))
+        .toLocaleString(DateTime.TIME_24_WITH_SECONDS),
       text: '',
     }
 
