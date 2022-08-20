@@ -49,7 +49,8 @@ const StyledHeader = styled.header`
 const StyledCenterColumn = styled.div`
   flex-basis: 37.5%;
   max-width: 37.5%;
-  border-right: solid black 1px;
+  border-left: 1px solid rgb(230, 236, 240);
+  border-right: 1px solid rgb(230, 236, 240);
 `
 
 const MenuItem = styled.div`

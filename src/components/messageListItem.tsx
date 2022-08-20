@@ -19,6 +19,8 @@ interface Props {
 const StyledSpan = styled.div`
   cursor: pointer;
 
+  border-bottom: 1px solid rgb(230, 236, 240);
+
   &:hover {
     background-color: rgb(245, 248, 250);
   }
