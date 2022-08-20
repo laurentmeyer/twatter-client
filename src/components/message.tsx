@@ -34,10 +34,14 @@ const StyledMetadataDiv = styled.div`
   display: flex;
 `
 
-const StyledAuthorNameLink = styled(Link)`
+const StyledAuthorNameAnchor = styled.a`
   font-size: 15px;
   font-weight: 700;
   margin-right: 8px;
+
+  &:hover {
+    text-decoration: underline;
+  }
 `
 
 const StyledAuthorHandleDiv = styled.div`
@@ -103,10 +107,9 @@ export const Message = ({ message }: Props) => {
       </StyledImageDiv>
       <StyledContentDiv>
         <StyledMetadataDiv>
-          <StyledAuthorNameLink href={`/authors/${author.id}`}>
-            <a>{`${author.firstName} ${author.lastName}`}</a>
-          </StyledAuthorNameLink>
-
+          <Link href={`/authors/${author.id}`}>
+            <StyledAuthorNameAnchor>{`${author.firstName} ${author.lastName}`}</StyledAuthorNameAnchor>
+          </Link>
           <StyledAuthorHandleDiv>{`@${author.handle}`}</StyledAuthorHandleDiv>
           <StyledTimeDiv>
             {message.time.toLocaleString(DateTime.TIME_SIMPLE)}

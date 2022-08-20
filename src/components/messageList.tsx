@@ -1,5 +1,5 @@
 import { MessageResource } from '../resources/message'
-import { Message } from './message'
+import { MessageListItem } from './messageListItem'
 
 export const MessageList = (props: {
   messages: ReadonlyArray<MessageResource>
@@ -9,7 +9,7 @@ export const MessageList = (props: {
   return (
     <>
       {messages.map((message) => (
-        <Message key={message.id} message={message} />
+        <MessageListItem key={message.id} message={message} />
       ))}
     </>
   )
