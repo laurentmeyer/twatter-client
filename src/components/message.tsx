@@ -71,10 +71,6 @@ const StyledIconWrapper = styled.div`
 
 const StyledSvgIcon = styled(SvgIcon)``
 
-const imageStyle = {
-  borderRadius: '50%',
-}
-
 /*
  * Images.
  */
@@ -98,7 +94,7 @@ export const Message = ({ message }: Props) => {
     <StyledMessageWrapper>
       <StyledImageDiv>
         <Image
-          style={imageStyle}
+          style={{ borderRadius: '50%' }}
           src={imageUrl}
           alt={author.image?.alternativeText ?? author.handle}
           width={49}

@@ -28,5 +28,8 @@ export const useMinutesLate = () => {
     return status === 200 ? data.data.attributes.minutesLate : undefined
   }
 
-  return useQuery(['training-session', 'minutesLate'], fetchMinutesLateAsync)
+  return useQuery<number | undefined>(
+    ['training-session', 'minutesLate'],
+    fetchMinutesLateAsync
+  )
 }

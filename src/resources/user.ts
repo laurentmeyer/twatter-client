@@ -60,4 +60,6 @@ const fetchCurrentUserAsync = async (jwt?: string) => {
  */
 
 export const useCurrentUser = (jwt?: string) =>
-  useQuery(['users', 'me'], async () => fetchCurrentUserAsync(jwt))
+  useQuery<UserResource | undefined>(['users', 'me'], async () =>
+    fetchCurrentUserAsync(jwt)
+  )

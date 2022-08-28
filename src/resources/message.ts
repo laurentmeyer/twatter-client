@@ -97,14 +97,18 @@ export const useMessage = (id: number) => {
       }
     )
 
-    return status === 200
+    return status === 200 && minutesLate
       ? messagePayloadToResource(data, minutesLate)
       : undefined
   }
 
-  return useQuery(['messages', id], fetchMessageAsync, {
-    enabled: Number.isFinite(id) && minutesLate !== undefined,
-  })
+  return useQuery<MessageResource | undefined>(
+    ['messages', id],
+    fetchMessageAsync,
+    {
+      enabled: Number.isFinite(id) && minutesLate !== undefined,
+    }
+  )
 }
 
 export const useMessages = () => {
@@ -120,7 +124,7 @@ export const useMessages = () => {
       }
     )
 
-    return status === 200
+    return status === 200 && minutesLate
       ? data.map((payload: MessagePayload) =>
           messagePayloadToResource(payload, minutesLate)
         )
