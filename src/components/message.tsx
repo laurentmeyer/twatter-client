@@ -22,8 +22,16 @@ const StyledMessageWrapper = styled.div`
   padding: 10px 15px;
 `
 
-const StyledImageDiv = styled.div`
+const StyledAuthorImageDiv = styled.div`
   margin-right: 10px;
+`
+
+const StyledMessageImageDiv = styled.div`
+  position: relative;
+  min-height: 300px;
+  background-color: rgb(204, 213, 219);
+  border-radius: 10px;
+  margin-bottom: 10px;
 `
 
 const StyledContentDiv = styled.div`
@@ -57,7 +65,9 @@ const StyledTimeDiv = styled.div`
   color: rgb(101, 119, 134);
 `
 
-const StyledMessageDiv = styled.div``
+const StyledMessageDiv = styled.div`
+  margin-bottom: 10px;
+`
 
 const StyledIconsDiv = styled.div`
   display: flex;
@@ -87,20 +97,20 @@ const likePath = [
  */
 
 export const Message = ({ message }: Props) => {
-  const { text, author } = message
-  const imageUrl = author?.image?.url ?? '/empty.jpeg'
+  const { text, author, image } = message
+  const authorImageUrl = author?.image?.url ?? '/empty.jpeg'
 
   return (
     <StyledMessageWrapper>
-      <StyledImageDiv>
+      <StyledAuthorImageDiv>
         <Image
           style={{ borderRadius: '50%' }}
-          src={imageUrl}
+          src={authorImageUrl}
           alt={author.image?.alternativeText ?? author.handle}
           width={49}
           height={49}
         />
-      </StyledImageDiv>
+      </StyledAuthorImageDiv>
       <StyledContentDiv>
         <StyledMetadataDiv>
           <Link href={`/authors/${author.id}`}>
@@ -112,6 +122,18 @@ export const Message = ({ message }: Props) => {
           </StyledTimeDiv>
         </StyledMetadataDiv>
         <StyledMessageDiv>{text}</StyledMessageDiv>
+        {image && (
+          <StyledMessageImageDiv>
+            <Image
+              src={image.url}
+              alt={image.alternativeText}
+              objectFit="contain"
+              layout="fill"
+              width={'500px'}
+              height={'300px'}
+            />
+          </StyledMessageImageDiv>
+        )}
         <StyledIconsDiv>
           <StyledIconWrapper>
             <StyledSvgIcon
