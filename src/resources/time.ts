@@ -2,6 +2,7 @@ import axios from 'axios'
 import { useSession } from 'next-auth/react'
 import { useQuery } from 'react-query'
 import { getStrapiURL } from '../../lib/api'
+import { isDefined } from '../../lib/utils'
 
 /*
  * Constants.
@@ -18,18 +19,26 @@ export const useMinutesLate = () => {
   const { data: session } = useSession()
 
   const fetchMinutesLateAsync = async () => {
-    const { data, status } = await axios.get(
-      getStrapiURL('/api/training-session'),
-      {
-        headers: { Authorization: `Bearer ${session?.jwt}` },
-      }
-    )
+    const { data } = await axios.get(getStrapiURL('/api/training-session'), {
+      headers: { Authorization: `Bearer ${session?.jwt}` },
+    })
 
-    return status === 200 ? data.data.attributes.minutesLate : undefined
+    const { minutesLate } = data.data.attributes
+
+    if (!isDefined(minutesLate)) {
+      console.log('Cannot fetch minutesLate')
+    }
+
+    return minutesLate
   }
 
-  return useQuery<number | undefined>(
+  const { data } = useQuery<number>(
     ['training-session', 'minutesLate'],
-    fetchMinutesLateAsync
+    fetchMinutesLateAsync,
+    {
+      enabled: isDefined(session),
+    }
   )
+
+  return data
 }

@@ -2,11 +2,11 @@ import axios from 'axios'
 import { useSession } from 'next-auth/react'
 import { useQuery } from 'react-query'
 import { getStrapiURL } from '../../lib/api'
-import {
-  ImageResource,
-  ImagePayloadFlat,
-  imagePayloadFlatToResource,
-} from './image'
+import type { ImageResource, ImagePayload } from './image'
+import type { MessagePayload, MessageResource } from './message'
+import { authorPayloadToResource } from '../helpers/payloadToResource'
+import { useMinutesLate } from './time'
+import { isDefined } from '../../lib/utils'
 
 /*
  * Types.
@@ -19,7 +19,8 @@ export interface AuthorPayload {
   lastName: string
   description?: string
   followersCount?: number
-  image?: ImagePayloadFlat
+  image?: ImagePayload
+  messages?: ReadonlyArray<MessagePayload>
 }
 
 export interface AuthorResource {
@@ -27,30 +28,10 @@ export interface AuthorResource {
   handle: string
   firstName: string
   lastName: string
+  messages: ReadonlyArray<MessageResource>
   image?: ImageResource
   description?: string
   followersCount?: number
-}
-
-/*
- * Helpers.
- */
-
-export const authorPayloadToResource = (
-  data: AuthorPayload
-): AuthorResource => {
-  const { handle, firstName, lastName, description, followersCount, image } =
-    data
-
-  return {
-    id: data.id,
-    handle,
-    firstName,
-    lastName,
-    description,
-    followersCount,
-    image: image && imagePayloadFlatToResource(image),
-  }
 }
 
 /*
@@ -60,19 +41,20 @@ export const authorPayloadToResource = (
 export const useAuthor = (id: number) => {
   // Should be a valid session, already checked by layout
   const { data: session } = useSession()
+  const minutesLate = useMinutesLate()
 
   const fetchAuthorAsync = async () => {
-    const { data, status } = await axios.get(
-      getStrapiURL(`/api/authors/${id}`),
-      {
-        headers: { Authorization: `Bearer ${session?.jwt}` },
-      }
-    )
+    const { data } = await axios.get(getStrapiURL(`/api/authors/${id}`), {
+      headers: { Authorization: `Bearer ${session?.jwt}` },
+    })
 
-    return status === 200 ? authorPayloadToResource(data) : undefined
+    if (!isDefined(minutesLate))
+      throw new Error('Cannot fetch author without minutesLate')
+
+    return authorPayloadToResource(data, minutesLate)
   }
 
   return useQuery(['authors', id], fetchAuthorAsync, {
-    enabled: Number.isFinite(id),
+    enabled: Number.isFinite(id) && isDefined(minutesLate),
   })
 }

@@ -91,7 +91,7 @@ export const MessageForm = () => {
 
   const { data: sessionData } = useSession()
   const { data: user } = useCurrentUser(sessionData?.jwt)
-  const { data: minutesLate = 0 } = useMinutesLate()
+  const minutesLate = useMinutesLate()
   const imageUrl = user?.author.image?.url ?? '/empty.jpeg'
 
   const addTweet = async () => {
@@ -99,7 +99,9 @@ export const MessageForm = () => {
     const data = {
       author: user?.author.id,
       time: DateTime.now()
-        .minus(Duration.fromMillis(MILLISECONDS_PER_MINUTE * minutesLate))
+        .minus(
+          Duration.fromMillis(MILLISECONDS_PER_MINUTE * (minutesLate ?? 0))
+        )
         .toLocaleString(DateTime.TIME_24_WITH_SECONDS),
       text,
     }

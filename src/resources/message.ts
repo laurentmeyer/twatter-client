@@ -1,23 +1,13 @@
 import axios from 'axios'
-import { DateTime, Duration } from 'luxon'
+import { DateTime } from 'luxon'
 import { useSession } from 'next-auth/react'
 import { useQuery } from 'react-query'
 import { getStrapiURL } from '../../lib/api'
-import {
-  AuthorPayload,
-  authorPayloadToResource,
-  AuthorResource,
-} from './author'
-import {
-  ImagePayloadFlat,
-  imagePayloadFlatToResource,
-  ImageResource,
-} from './image'
-import {
-  MILLISECONDS_PER_MINUTE,
-  MILLISECONDS_PER_SECOND,
-  useMinutesLate,
-} from './time'
+import { isDefined } from '../../lib/utils'
+import { messagePayloadToResource } from '../helpers/payloadToResource'
+import type { AuthorPayload, AuthorResource } from './author'
+import { ImagePayload, ImageResource } from './image'
+import { MILLISECONDS_PER_SECOND, useMinutesLate } from './time'
 
 /*
  * Types.
@@ -31,7 +21,7 @@ export interface MessagePayload {
   likesCount?: number
   repliesCount?: number
   author: AuthorPayload | null
-  image?: ImagePayloadFlat
+  image?: ImagePayload
 }
 
 export interface MessageResource {
@@ -46,67 +36,30 @@ export interface MessageResource {
 }
 
 /*
- * Helpers.
- */
-
-const messagePayloadToResource = (
-  data: MessagePayload,
-  minutesLate: number
-): MessageResource => {
-  const {
-    id,
-    author,
-    public: isPublic,
-    text,
-    time,
-    image,
-    likesCount,
-    repliesCount,
-  } = data
-
-  if (!author) throw new Error(`Message ${id} has no author`)
-
-  return {
-    id,
-    text,
-    isPublic,
-    time: DateTime.fromISO(time).plus(
-      Duration.fromMillis(MILLISECONDS_PER_MINUTE * minutesLate)
-    ),
-    likesCount: likesCount ?? 0,
-    repliesCount: repliesCount ?? 0,
-    image: image && imagePayloadFlatToResource(image),
-    author: authorPayloadToResource(author),
-  }
-}
-
-/*
  * Hooks.
  */
 
 export const useMessage = (id: number) => {
   // Should be a valid session, already checked by layout
   const { data: session } = useSession()
-  const { data: minutesLate } = useMinutesLate()
+  const minutesLate = useMinutesLate()
 
   const fetchMessageAsync = async () => {
-    const { data, status } = await axios.get(
-      getStrapiURL(`/api/messages/${id}`),
-      {
-        headers: { Authorization: `Bearer ${session?.jwt}` },
-      }
-    )
+    const { data } = await axios.get(getStrapiURL(`/api/messages/${id}`), {
+      headers: { Authorization: `Bearer ${session?.jwt}` },
+    })
 
-    return status === 200 && minutesLate
-      ? messagePayloadToResource(data, minutesLate)
-      : undefined
+    if (!isDefined(minutesLate))
+      throw new Error('Cannot fetch message without minutesLate')
+
+    return messagePayloadToResource(data, minutesLate)
   }
 
   return useQuery<MessageResource | undefined>(
     ['messages', id],
     fetchMessageAsync,
     {
-      enabled: Number.isFinite(id) && minutesLate !== undefined,
+      enabled: Number.isFinite(id) && isDefined(minutesLate),
     }
   )
 }
@@ -114,21 +67,24 @@ export const useMessage = (id: number) => {
 export const useMessages = () => {
   // Should be a valid session, already checked by layout
   const { data: session } = useSession()
-  const { data: minutesLate } = useMinutesLate()
+  const minutesLate = useMinutesLate()
 
   const fetchMessagesAsync = async () => {
-    const { data, status } = await axios.get(
+    const { data } = await axios.get(
       getStrapiURL('/api/messages?sort=time:desc'),
       {
         headers: { Authorization: `Bearer ${session?.jwt}` },
       }
     )
 
-    return status === 200 && minutesLate
-      ? data.map((payload: MessagePayload) =>
-          messagePayloadToResource(payload, minutesLate)
-        )
-      : []
+    if (!isDefined(minutesLate))
+      throw new Error('Cannot fetch messages without minutesLate')
+
+    return data
+      .map((payload: MessagePayload) =>
+        messagePayloadToResource(payload, minutesLate)
+      )
+      .filter(isDefined)
   }
 
   return useQuery<ReadonlyArray<MessageResource>>(
@@ -136,7 +92,7 @@ export const useMessages = () => {
     fetchMessagesAsync,
     {
       refetchInterval: 15 * MILLISECONDS_PER_SECOND,
-      enabled: minutesLate !== undefined,
+      enabled: isDefined(minutesLate),
     }
   )
 }
