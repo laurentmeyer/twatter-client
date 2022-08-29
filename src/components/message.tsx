@@ -1,6 +1,6 @@
 import { MessageResource } from '../resources/message'
 import styled from 'styled-components'
-import Image from 'next/image'
+import Image from 'next/future/image'
 import { DateTime } from 'luxon'
 import SvgIcon from './svgIcon'
 import Link from 'next/link'
@@ -23,7 +23,10 @@ const StyledMessageWrapper = styled.div`
 `
 
 const StyledAuthorImageDiv = styled.div`
+  position: relative;
   margin-right: 10px;
+  height: 49px;
+  width: 49px;
 `
 
 const StyledMessageImageDiv = styled.div`
@@ -104,11 +107,10 @@ export const Message = ({ message }: Props) => {
     <StyledMessageWrapper>
       <StyledAuthorImageDiv>
         <Image
-          style={{ borderRadius: '50%' }}
+          style={{ borderRadius: '50%', objectFit: 'cover' }}
           src={authorImageUrl}
           alt={author.image?.alternativeText ?? author.handle}
-          width={49}
-          height={49}
+          fill
         />
       </StyledAuthorImageDiv>
       <StyledContentDiv>
@@ -125,12 +127,12 @@ export const Message = ({ message }: Props) => {
         {image && (
           <StyledMessageImageDiv>
             <Image
+              style={{ objectFit: 'contain' }}
               src={image.url}
               alt={image.alternativeText}
-              objectFit="contain"
-              layout="fill"
-              width={'500px'}
-              height={'300px'}
+              fill
+              // width={'500px'}
+              // height={'300px'}
             />
           </StyledMessageImageDiv>
         )}

@@ -1,4 +1,4 @@
-import Image from 'next/image'
+import Image from 'next/future/image'
 import styled from 'styled-components'
 import { AuthorResource } from '../resources/author'
 import { MessageList } from './messageList'
@@ -14,19 +14,34 @@ interface Props {
 /*
  * Styles.
  */
-
 const StyledAuthorWrapper = styled.div`
+  border-bottom: 2px solid rgb(29, 161, 242);
+`
+
+const StyledAuthorInfoWrapper = styled.div`
+  padding-left: 15px;
+  padding-right: 15px;
+`
+
+const StyledBackgroudWrapper = styled.div`
+  position: relative;
+  height: 150px;
+`
+
+const ImgFlex = styled.div`
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding-left: 15px;
+  padding-right: 15px;
 `
 
-const StyledBackgroudImage = styled.div`
-  background-color: teal;
-  width: 100%;
-  padding-bottom: 33%;
+const Avatar = styled.div`
+  position: relative;
+  width: 117px;
+  height: 117px;
+  margin-top: -13%;
 `
-
-const StyledBackgroudTest = styled.div``
 
 /*
  * Component.
@@ -38,15 +53,27 @@ export const Author = ({ author }: Props) => {
   return (
     <>
       <StyledAuthorWrapper>
-        <StyledBackgroudImage>
-          <StyledBackgroudTest />
-        </StyledBackgroudImage>
-        <Image
-          src={image?.url ?? '/empty.jpeg'}
-          alt={image?.alternativeText ?? handle}
-          width={'400px'}
-          height={'400px'}
-        />
+        <StyledBackgroudWrapper>
+          <Image src={'/background.jpg'} alt="background" fill />
+        </StyledBackgroudWrapper>
+        <ImgFlex>
+          <Avatar>
+            <Image
+              style={{
+                border: '4px solid white',
+                borderRadius: '50%',
+                objectFit: 'cover',
+                backgroundColor: 'grey',
+              }}
+              src={image?.url ?? '/empty.jpeg'}
+              alt={image?.alternativeText ?? handle}
+              fill
+            />
+          </Avatar>
+        </ImgFlex>
+        <StyledAuthorInfoWrapper>
+          <h2>{`${author.firstName} ${author.lastName}`}</h2>
+        </StyledAuthorInfoWrapper>
       </StyledAuthorWrapper>
       <MessageList messages={messages} />
     </>
