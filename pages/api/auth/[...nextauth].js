@@ -2,6 +2,9 @@ import NextAuth from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 
 export default NextAuth({
+  theme: {
+    logo: 'https://ratp.publispeak.com/brochure-institutionnelle-2019/uploads/297/7457c5a1129a0451cafd2c8156e91b3fcfa4cd16.png',
+  },
   providers: [
     CredentialsProvider({
       // The name to display on the sign in form (e.g. 'Sign in with...')
