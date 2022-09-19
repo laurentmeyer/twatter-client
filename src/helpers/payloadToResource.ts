@@ -42,7 +42,7 @@ export const authorPayloadToResource = (
     firstName,
     lastName,
     description,
-    followersCount,
+    followersCount: followersCount || 0,
     image: image && imagePayloadToResource(image),
     background: background && imagePayloadToResource(background),
     messages: messages
@@ -59,7 +59,15 @@ export const messagePayloadToResource = (
   data: MessagePayload,
   minutesLate: number
 ): MessageResource | undefined => {
-  const { id, author, text, image, likesCount, replyTo } = data
+  const {
+    id,
+    author,
+    text,
+    image,
+    likesCount = 0,
+    replies = [],
+    replyTo,
+  } = data
 
   const time = DateTime.fromISO(data.time).plus(
     Duration.fromMillis(MILLISECONDS_PER_MINUTE * minutesLate)
@@ -67,18 +75,16 @@ export const messagePayloadToResource = (
 
   if (time > DateTime.now()) return undefined
 
-  const replies = (data.replies ?? [])
-    .map((r) => messagePayloadToResource(r, minutesLate))
-    .filter(isDefined)
-
   return {
     id,
     text,
     time,
-    likesCount: likesCount ?? 0,
+    likesCount,
     image: image && imagePayloadToResource(image),
     author: author ? authorPayloadToResource(author, minutesLate) : undefined,
-    replies,
     isReply: Boolean(replyTo),
+    replies: replies
+      .map((r) => messagePayloadToResource(r, minutesLate))
+      .filter(isDefined),
   }
 }

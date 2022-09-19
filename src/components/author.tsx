@@ -48,7 +48,15 @@ const Avatar = styled.div`
  */
 
 export const Author = ({ author }: Props) => {
-  const { handle, image, background } = author
+  const {
+    handle,
+    image,
+    background,
+    firstName,
+    lastName,
+    description,
+    followersCount,
+  } = author
 
   const messages = author.messages
     .filter(({ isReply }) => !isReply)
@@ -83,7 +91,13 @@ export const Author = ({ author }: Props) => {
           </Avatar>
         </ImgFlex>
         <StyledAuthorInfoWrapper>
-          <h2>{`${author.firstName} ${author.lastName}`}</h2>
+          <h2>{`${firstName} ${lastName}`}</h2>
+          {`@${handle}`}
+          <br />
+          {description}
+          <br />
+          <strong>{followersCount.toString()}</strong>
+          {' followers'}
         </StyledAuthorInfoWrapper>
       </StyledAuthorWrapper>
       <MessageList messages={messages} />

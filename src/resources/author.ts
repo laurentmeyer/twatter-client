@@ -17,8 +17,8 @@ export interface AuthorPayload {
   handle: string
   firstName: string
   lastName: string
+  followersCount: number | null
   description?: string
-  followersCount?: number
   image?: ImagePayload
   background?: ImagePayload
   messages?: ReadonlyArray<MessagePayload>
@@ -30,10 +30,10 @@ export interface AuthorResource {
   firstName: string
   lastName: string
   messages: ReadonlyArray<MessageResource>
+  followersCount: number
   image?: ImageResource
   background?: ImageResource
   description?: string
-  followersCount?: number
 }
 
 /*
