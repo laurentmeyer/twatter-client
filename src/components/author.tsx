@@ -48,18 +48,24 @@ const Avatar = styled.div`
  */
 
 export const Author = ({ author }: Props) => {
-  const { handle, image } = author
+  const { handle, image, background } = author
 
-  const messages = author.messages.map((message) => ({
-    ...message,
-    author: author,
-  }))
+  const messages = author.messages
+    .filter(({ isReply }) => !isReply)
+    .map((message) => ({
+      ...message,
+      author: author,
+    }))
 
   return (
     <>
       <StyledAuthorWrapper>
         <StyledBackgroudWrapper>
-          <Image src={'/background.jpg'} alt="background" fill />
+          <Image
+            src={background?.url ?? '/background.jpg'}
+            alt={background?.alternativeText ?? 'background'}
+            fill
+          />
         </StyledBackgroudWrapper>
         <ImgFlex>
           <Avatar>

@@ -32,6 +32,7 @@ export const authorPayloadToResource = (
     description,
     followersCount,
     image,
+    background,
     messages = [],
   } = data
 
@@ -43,6 +44,7 @@ export const authorPayloadToResource = (
     description,
     followersCount,
     image: image && imagePayloadToResource(image),
+    background: background && imagePayloadToResource(background),
     messages: messages
       .map((message) => messagePayloadToResource(message, minutesLate))
       .filter(isDefined),
