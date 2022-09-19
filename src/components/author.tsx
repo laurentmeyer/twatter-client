@@ -48,7 +48,12 @@ const Avatar = styled.div`
  */
 
 export const Author = ({ author }: Props) => {
-  const { handle, image, messages } = author
+  const { handle, image } = author
+
+  const messages = author.messages.map((message) => ({
+    ...message,
+    author: author,
+  }))
 
   return (
     <>

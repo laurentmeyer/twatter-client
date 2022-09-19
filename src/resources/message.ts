@@ -17,22 +17,22 @@ export interface MessagePayload {
   id: number
   text: string
   time: string
-  public: boolean
+  replyTo?: MessagePayload | null
   likesCount?: number
-  repliesCount?: number
-  author: AuthorPayload | null
+  author?: AuthorPayload
   image?: ImagePayload
+  replies?: ReadonlyArray<MessagePayload>
 }
 
 export interface MessageResource {
   id: number
   text: string
   time: DateTime
-  isPublic: boolean
   likesCount: number
-  repliesCount: number
-  author: AuthorResource
+  isReply: boolean
+  author?: AuthorResource
   image?: ImageResource
+  replies: ReadonlyArray<MessageResource>
 }
 
 /*

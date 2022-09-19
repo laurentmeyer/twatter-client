@@ -10,7 +10,13 @@ const MessagePage = () => {
 
   switch (status) {
     case 'success':
-      if (message) return <Message message={message} />
+      if (message)
+        return (
+          <Message
+            message={message}
+            shouldOpenModal={router.query.comment !== undefined}
+          />
+        )
       else throw new Error('Cannot fetch message')
 
     case 'loading':

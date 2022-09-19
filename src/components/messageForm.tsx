@@ -31,12 +31,6 @@ const photoPath = [
  * Styles.
  */
 
-const StyledWrapper = styled.div`
-  padding: 15px;
-  border-bottom: 10px solid rgb(230, 236, 240);
-  display: flex;
-`
-
 const StyledImageWrapper = styled.div`
   margin-right: 8px;
 `
@@ -81,10 +75,24 @@ const StyledFileInput = styled.div`
 const StyledUploadIcon = styled(SvgIcon)``
 
 /*
+ * Props.
+ */
+
+interface MessageFormProps {
+  placeHolder: string
+  replyTo?: number
+  onTweet?: () => void
+}
+
+/*
  * Component.
  */
 
-export const MessageForm = () => {
+export const MessageForm = ({
+  placeHolder,
+  replyTo,
+  onTweet,
+}: MessageFormProps) => {
   const [text, setText] = useState('')
   const [isSendDisabled, setIsSendDisabled] = useState(true)
   const [preview, setPreview] = useState<Preview>({ image: '', file: null })
@@ -104,6 +112,7 @@ export const MessageForm = () => {
         )
         .toLocaleString(DateTime.TIME_24_WITH_SECONDS),
       text,
+      replyTo,
     }
 
     const formData = new FormData()
@@ -114,8 +123,6 @@ export const MessageForm = () => {
 
     if (file) formData.append(`files.image`, file, file.name)
 
-    console.log('formData', ...formData.values())
-
     await axios.post(getStrapiURL(`/api/messages/`), formData, {
       headers: { Authorization: `Bearer ${sessionData?.jwt}` },
     })
@@ -123,6 +130,7 @@ export const MessageForm = () => {
     setIsSendDisabled(false)
     setText('')
     setPreview({ image: '', file: null })
+    if (onTweet) onTweet()
   }
 
   const handlePhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -140,7 +148,7 @@ export const MessageForm = () => {
   }
 
   return (
-    <StyledWrapper>
+    <>
       <StyledImageWrapper>
         <Image
           style={{ borderRadius: '50%' }}
@@ -153,7 +161,7 @@ export const MessageForm = () => {
       <StyledFormWrapper>
         <StyledTextArea
           rows={5}
-          placeholder="What's happening?"
+          placeholder={placeHolder}
           value={text}
           onChange={(e) => {
             setText(e.target.value)
@@ -189,6 +197,6 @@ export const MessageForm = () => {
           </Button>
         </StyledButtonsWrapper>
       </StyledFormWrapper>
-    </StyledWrapper>
+    </>
   )
 }

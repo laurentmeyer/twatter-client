@@ -2,7 +2,7 @@ import { DateTime, Duration } from 'luxon'
 import { isDefined } from '../../lib/utils'
 import type { AuthorPayload, AuthorResource } from '../resources/author'
 import type { ImagePayload, ImageResource } from '../resources/image'
-import type { MessagePayload, MessageResource } from '../resources/message'
+import { MessagePayload, MessageResource } from '../resources/message'
 import { MILLISECONDS_PER_MINUTE } from '../resources/time'
 
 // This file avoids circular dependencies.
@@ -22,6 +22,7 @@ export const imagePayloadToResource = (data: ImagePayload): ImageResource => ({
 
 export const authorPayloadToResource = (
   data: AuthorPayload,
+  // TODO get rid of minutes late here
   minutesLate: number
 ): AuthorResource => {
   const {
@@ -34,7 +35,7 @@ export const authorPayloadToResource = (
     messages = [],
   } = data
 
-  const resource = {
+  return {
     id: data.id,
     handle,
     firstName,
@@ -42,15 +43,8 @@ export const authorPayloadToResource = (
     description,
     followersCount,
     image: image && imagePayloadToResource(image),
-    messages: [],
-  }
-
-  return {
-    ...resource,
     messages: messages
-      .map((message) =>
-        messagePayloadToResource(message, minutesLate, resource)
-      )
+      .map((message) => messagePayloadToResource(message, minutesLate))
       .filter(isDefined),
   }
 }
@@ -61,20 +55,9 @@ export const authorPayloadToResource = (
 
 export const messagePayloadToResource = (
   data: MessagePayload,
-  minutesLate: number,
-  currentAuthor?: AuthorResource // API does not provide authors in case of an author's message list
+  minutesLate: number
 ): MessageResource | undefined => {
-  const {
-    id,
-    author,
-    public: isPublic,
-    text,
-    image,
-    likesCount,
-    repliesCount,
-  } = data
-
-  if (!(currentAuthor ?? author)) throw new Error(`Message ${id} has no author`)
+  const { id, author, text, image, likesCount, replyTo } = data
 
   const time = DateTime.fromISO(data.time).plus(
     Duration.fromMillis(MILLISECONDS_PER_MINUTE * minutesLate)
@@ -82,14 +65,20 @@ export const messagePayloadToResource = (
 
   if (time > DateTime.now()) return undefined
 
+  console.log({ data })
+
+  const replies = (data.replies ?? [])
+    .map((r) => messagePayloadToResource(r, minutesLate))
+    .filter(isDefined)
+
   return {
     id,
     text,
     time,
-    isPublic,
     likesCount: likesCount ?? 0,
-    repliesCount: repliesCount ?? 0,
     image: image && imagePayloadToResource(image),
-    author: currentAuthor ?? authorPayloadToResource(author!, minutesLate),
+    author: author ? authorPayloadToResource(author, minutesLate) : undefined,
+    replies,
+    isReply: Boolean(replyTo),
   }
 }
