@@ -65,8 +65,6 @@ export const messagePayloadToResource = (
 
   if (time > DateTime.now()) return undefined
 
-  console.log({ data })
-
   const replies = (data.replies ?? [])
     .map((r) => messagePayloadToResource(r, minutesLate))
     .filter(isDefined)

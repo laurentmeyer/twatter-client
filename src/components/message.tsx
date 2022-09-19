@@ -4,7 +4,7 @@ import Image from 'next/future/image'
 import { DateTime } from 'luxon'
 import SvgIcon from './svgIcon'
 import Link from 'next/link'
-import { useState } from 'react'
+import { ReactNode, useState } from 'react'
 import { Modal } from './modal'
 import { MessageForm } from './messageForm'
 import { useRouter } from 'next/router'
@@ -80,7 +80,13 @@ const StyledIconWrapper = styled.div`
   align-items: center;
 `
 
-const StyledSvgIcon = styled(SvgIcon)``
+const StyledTokenAnchor = styled.a`
+  color: rgb(14, 92, 140);
+
+  &:hover {
+    text-decoration: underline;
+  }
+`
 
 /*
  * Images.
@@ -128,7 +134,7 @@ export const Message = ({ message, shouldOpenModal }: Props) => {
     <StyledIconWrapper
       onClick={() => isMessagePage && setCommentModalIsOpen(true)}
     >
-      <StyledSvgIcon
+      <SvgIcon
         paths={commentPath}
         width="18.75px"
         height="18.75px"
@@ -174,7 +180,7 @@ export const Message = ({ message, shouldOpenModal }: Props) => {
               {message.time.toLocaleString(DateTime.TIME_SIMPLE)}
             </StyledTimeDiv>
           </StyledMetadataDiv>
-          <StyledMessageDiv>{text}</StyledMessageDiv>
+          <StyledMessageDiv>{tokenize(text)}</StyledMessageDiv>
           {image && (
             <StyledMessageImageDiv>
               <Image
@@ -188,7 +194,7 @@ export const Message = ({ message, shouldOpenModal }: Props) => {
           <StyledIconsDiv>
             {!isReply && maybeCommentLink}
             <StyledIconWrapper>
-              <StyledSvgIcon
+              <SvgIcon
                 paths={likePath}
                 width="18.75px"
                 height="18.75px"
@@ -204,4 +210,29 @@ export const Message = ({ message, shouldOpenModal }: Props) => {
       )}
     </>
   )
+}
+
+/*
+ * Helpers.
+ */
+
+function tokenize(text: string): ReactNode {
+  const regexp =
+    /(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b[-a-zA-Z0-9()@:%_\+.~#?&//=]*)/g
+
+  const nodes: Array<ReactNode> = []
+
+  for (const token of text.split(regexp)) {
+    if (!token) continue
+
+    if (token.match(regexp))
+      nodes.push(
+        <StyledTokenAnchor href={token} key={token}>
+          {token}
+        </StyledTokenAnchor>
+      )
+    else nodes.push(token)
+  }
+
+  return <>{nodes}</>
 }

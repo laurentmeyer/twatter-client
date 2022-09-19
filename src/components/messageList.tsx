@@ -30,17 +30,17 @@ interface Props {
  */
 
 export const MessageList = ({ messages }: Props) => {
-  console.log(messages)
   return (
     <>
       {messages.map((message) => {
-        const messageNode = <Message message={message} />
-
-        if (message.isReply) return messageNode
+        if (message.isReply)
+          return <Message key={message.id} message={message} />
 
         return (
           <Link key={message.id} href={`/messages/${message.id}`} passHref>
-            <StyledSpan>{messageNode}</StyledSpan>
+            <StyledSpan>
+              <Message message={message} />
+            </StyledSpan>
           </Link>
         )
       })}
