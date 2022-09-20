@@ -5,10 +5,10 @@ import { MessageList } from '../src/components/messageList'
 import { useMessages } from '../src/resources/message'
 import { useChannel, useEvent } from '@harelpls/use-pusher'
 import styled from 'styled-components'
+import { StyledBottomMarginWrapper } from '../styles/common'
 
 const StyledWrapper = styled.div`
   padding: 15px;
-  border-bottom: 10px solid rgb(230, 236, 240);
   display: flex;
 `
 
@@ -36,9 +36,11 @@ const Home: NextPage = () => {
 
       return (
         <>
-          <StyledWrapper>
-            <MessageForm placeHolder="What's happening?" />
-          </StyledWrapper>
+          <StyledBottomMarginWrapper>
+            <StyledWrapper>
+              <MessageForm placeHolder="What's happening?" />
+            </StyledWrapper>
+          </StyledBottomMarginWrapper>
           <MessageList messages={nonReplyMessages} />
         </>
       )

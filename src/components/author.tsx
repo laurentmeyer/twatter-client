@@ -1,5 +1,6 @@
 import Image from 'next/future/image'
 import styled from 'styled-components'
+import { StyledBottomMarginWrapper } from '../../styles/common'
 import { AuthorResource } from '../resources/author'
 import { MessageList } from './messageList'
 
@@ -14,10 +15,6 @@ interface Props {
 /*
  * Styles.
  */
-
-const StyledAuthorWrapper = styled.div`
-  border-bottom: 2px solid rgb(29, 161, 242);
-`
 
 const StyledAuthorInfoWrapper = styled.div`
   padding-left: 15px;
@@ -69,7 +66,7 @@ export const Author = ({ author }: Props) => {
 
   return (
     <>
-      <StyledAuthorWrapper>
+      <StyledBottomMarginWrapper>
         <StyledBackgroudWrapper>
           <Image
             src={backgroundUrl ?? '/background.jpg'}
@@ -101,7 +98,7 @@ export const Author = ({ author }: Props) => {
           <strong>{followersCount.toString()}</strong>
           {' followers'}
         </StyledAuthorInfoWrapper>
-      </StyledAuthorWrapper>
+      </StyledBottomMarginWrapper>
       <MessageList messages={messages} />
     </>
   )
