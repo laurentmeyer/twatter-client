@@ -72,8 +72,6 @@ const StyledFileInput = styled.div`
   }
 `
 
-const StyledUploadIcon = styled(SvgIcon)``
-
 /*
  * Props.
  */
@@ -171,7 +169,7 @@ export const MessageForm = ({
         <StyledButtonsWrapper>
           <StyledFileInput>
             <label htmlFor="photo">
-              <StyledUploadIcon
+              <SvgIcon
                 paths={photoPath}
                 width={'18.75px'}
                 height={'18.75px'}

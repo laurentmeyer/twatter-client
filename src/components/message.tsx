@@ -4,13 +4,9 @@ import Image from 'next/future/image'
 import { DateTime } from 'luxon'
 import SvgIcon from './svgIcon'
 import Link from 'next/link'
-import { ReactNode, useState } from 'react'
-import { Modal } from './modal'
-import { MessageForm } from './messageForm'
-import { useRouter } from 'next/router'
+import { ReactNode } from 'react'
 import { useChannel, useEvent } from '@harelpls/use-pusher'
 import { useQueryClient } from 'react-query'
-import { MessageList } from './messageList'
 
 /*
  * Styles.
@@ -106,23 +102,18 @@ const likePath = [
 interface Props {
   message: MessageResource
   // TODO add minutesLate here
-  shouldOpenModal?: boolean
 }
 
 /*
  * Component.
  */
 
-export const Message = ({ message, shouldOpenModal }: Props) => {
+export const Message = ({ message }: Props) => {
   const { text, author, image, isReply } = message
   const queryClient = useQueryClient()
-  const router = useRouter()
   const channel = useChannel('messages')
-  const [commentModalIsOpen, setCommentModalIsOpen] = useState(shouldOpenModal)
-  const isMessagePage = /^\/messages\//.test(router.pathname)
   const authorImageUrl = author?.image?.url ?? '/empty.jpeg'
 
-  // TODO check what happens with 2 browsers
   useEvent(channel, 'post', async (data?: string) => {
     if (data === 'invalidate')
       queryClient.invalidateQueries(['messages', message.id])
@@ -130,85 +121,62 @@ export const Message = ({ message, shouldOpenModal }: Props) => {
 
   if (!author) throw new Error(`Message ${message.id} has no author`)
 
-  const commentIcon = (
-    <StyledIconWrapper
-      onClick={() => isMessagePage && setCommentModalIsOpen(true)}
-    >
-      <SvgIcon
-        paths={commentPath}
-        width="18.75px"
-        height="18.75px"
-        fill="rgb(101, 119, 134)"
-      />
-      {message.replies.length}
-    </StyledIconWrapper>
-  )
-
-  const maybeCommentLink = isMessagePage ? (
-    commentIcon
-  ) : (
-    <Link href={`/messages/${message.id}?comment`}>{commentIcon}</Link>
-  )
-
   return (
-    <>
-      {commentModalIsOpen && (
-        <Modal handleClose={() => setCommentModalIsOpen(false)}>
-          <MessageForm
-            placeHolder="Reply to this tweet"
-            onTweet={() => setCommentModalIsOpen(false)}
-            replyTo={message.id}
-          />
-        </Modal>
-      )}
-      <StyledMessageWrapper>
-        <StyledAuthorImageDiv>
-          <Image
-            style={{ borderRadius: '50%', objectFit: 'cover' }}
-            src={authorImageUrl}
-            alt={author.image?.alternativeText ?? author.handle}
-            fill
-          />
-        </StyledAuthorImageDiv>
-        <StyledContentDiv>
-          <StyledMetadataDiv>
-            <Link href={`/authors/${author.id}`}>
-              <StyledAuthorNameAnchor>{`${author.firstName} ${author.lastName}`}</StyledAuthorNameAnchor>
-            </Link>
-            <StyledAuthorHandleDiv>{`@${author.handle}`}</StyledAuthorHandleDiv>
-            <StyledTimeDiv>
-              {message.time.toLocaleString(DateTime.TIME_SIMPLE)}
-            </StyledTimeDiv>
-          </StyledMetadataDiv>
-          <StyledMessageDiv>{tokenize(text)}</StyledMessageDiv>
-          {image && (
-            <StyledMessageImageDiv>
-              <Image
-                style={{ objectFit: 'contain' }}
-                src={image.url}
-                alt={image.alternativeText}
-                fill
-              />
-            </StyledMessageImageDiv>
-          )}
-          <StyledIconsDiv>
-            {!isReply && maybeCommentLink}
+    <StyledMessageWrapper>
+      <StyledAuthorImageDiv>
+        <Image
+          style={{ borderRadius: '50%', objectFit: 'cover' }}
+          src={authorImageUrl}
+          alt={author.image?.alternativeText ?? author.handle}
+          fill
+        />
+      </StyledAuthorImageDiv>
+      <StyledContentDiv>
+        <StyledMetadataDiv>
+          <Link href={`/authors/${author.id}`}>
+            <StyledAuthorNameAnchor>{`${author.firstName} ${author.lastName}`}</StyledAuthorNameAnchor>
+          </Link>
+          <StyledAuthorHandleDiv>{`@${author.handle}`}</StyledAuthorHandleDiv>
+          <StyledTimeDiv>
+            {message.time.toLocaleString(DateTime.TIME_SIMPLE)}
+          </StyledTimeDiv>
+        </StyledMetadataDiv>
+        <StyledMessageDiv>{tokenize(text)}</StyledMessageDiv>
+        {image && (
+          <StyledMessageImageDiv>
+            <Image
+              style={{ objectFit: 'contain' }}
+              src={image.url}
+              alt={image.alternativeText}
+              fill
+            />
+          </StyledMessageImageDiv>
+        )}
+        <StyledIconsDiv>
+          {!isReply && (
             <StyledIconWrapper>
               <SvgIcon
-                paths={likePath}
+                paths={commentPath}
                 width="18.75px"
                 height="18.75px"
                 fill="rgb(101, 119, 134)"
               />
-              {message.likesCount}
+              {message.replies.length}
             </StyledIconWrapper>
-          </StyledIconsDiv>
-        </StyledContentDiv>
-      </StyledMessageWrapper>
-      {isMessagePage && message.replies.length > 0 && (
-        <MessageList messages={message.replies} />
-      )}
-    </>
+          )}
+          {/* {!isReply && maybeCommentLink} */}
+          <StyledIconWrapper>
+            <SvgIcon
+              paths={likePath}
+              width="18.75px"
+              height="18.75px"
+              fill="rgb(101, 119, 134)"
+            />
+            {message.likesCount}
+          </StyledIconWrapper>
+        </StyledIconsDiv>
+      </StyledContentDiv>
+    </StyledMessageWrapper>
   )
 }
 
