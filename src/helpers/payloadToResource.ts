@@ -35,8 +35,11 @@ export const authorPayloadToResource = (
     messages = [],
   } = data
 
+  const sanitizeUrl = (url: string | undefined | null) =>
+    url === 'null' || !url ? undefined : url
+
   const image = data.image && imagePayloadToResource(data.image)
-  const imageUrl = data.imageUrl || image?.url
+  const imageUrl = image?.url || sanitizeUrl(data.imageUrl)
   const backgroundImage = background && imagePayloadToResource(background)
 
   return {

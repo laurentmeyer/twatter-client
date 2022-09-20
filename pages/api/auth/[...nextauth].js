@@ -3,7 +3,7 @@ import CredentialsProvider from 'next-auth/providers/credentials'
 
 export default NextAuth({
   theme: {
-    logo: 'https://ratp.publispeak.com/brochure-institutionnelle-2019/uploads/297/7457c5a1129a0451cafd2c8156e91b3fcfa4cd16.png',
+    logo: 'https://upload.wikimedia.org/wikipedia/fr/thumb/5/5c/Engie_logo.svg/1200px-Engie_logo.svg.png',
   },
   providers: [
     CredentialsProvider({

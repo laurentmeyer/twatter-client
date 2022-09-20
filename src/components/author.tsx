@@ -64,6 +64,9 @@ export const Author = ({ author }: Props) => {
       author: author,
     }))
 
+  const displayName =
+    firstName && lastName ? `${firstName} ${lastName}` : handle
+
   return (
     <>
       <StyledBottomMarginWrapper>
@@ -90,7 +93,7 @@ export const Author = ({ author }: Props) => {
           </Avatar>
         </ImgFlex>
         <StyledAuthorInfoWrapper>
-          <h2>{`${firstName} ${lastName}`}</h2>
+          <h2>{displayName}</h2>
           {`@${handle}`}
           <br />
           {description}
