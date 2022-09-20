@@ -31,10 +31,13 @@ export const authorPayloadToResource = (
     lastName,
     description,
     followersCount,
-    image,
     background,
     messages = [],
   } = data
+
+  const image = data.image && imagePayloadToResource(data.image)
+  const imageUrl = data.imageUrl || image?.url
+  const backgroundImage = background && imagePayloadToResource(background)
 
   return {
     id: data.id,
@@ -43,8 +46,10 @@ export const authorPayloadToResource = (
     lastName,
     description,
     followersCount: followersCount || 0,
-    image: image && imagePayloadToResource(image),
-    background: background && imagePayloadToResource(background),
+    imageUrl,
+    imageAlt: image && image.alternativeText,
+    backgroundUrl: backgroundImage?.url,
+    backgroundAlt: backgroundImage?.alternativeText,
     messages: messages
       .map((message) => messagePayloadToResource(message, minutesLate))
       .filter(isDefined),

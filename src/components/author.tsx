@@ -14,6 +14,7 @@ interface Props {
 /*
  * Styles.
  */
+
 const StyledAuthorWrapper = styled.div`
   border-bottom: 2px solid rgb(29, 161, 242);
 `
@@ -50,8 +51,9 @@ const Avatar = styled.div`
 export const Author = ({ author }: Props) => {
   const {
     handle,
-    image,
-    background,
+    imageUrl,
+    imageAlt,
+    backgroundUrl,
     firstName,
     lastName,
     description,
@@ -70,8 +72,8 @@ export const Author = ({ author }: Props) => {
       <StyledAuthorWrapper>
         <StyledBackgroudWrapper>
           <Image
-            src={background?.url ?? '/background.jpg'}
-            alt={background?.alternativeText ?? 'background'}
+            src={backgroundUrl ?? '/background.jpg'}
+            alt={'background'}
             fill
           />
         </StyledBackgroudWrapper>
@@ -84,8 +86,8 @@ export const Author = ({ author }: Props) => {
                 objectFit: 'cover',
                 backgroundColor: 'grey',
               }}
-              src={image?.url ?? '/empty.jpeg'}
-              alt={image?.alternativeText ?? handle}
+              src={imageUrl ?? '/empty.jpeg'}
+              alt={imageAlt ?? handle}
               fill
             />
           </Avatar>

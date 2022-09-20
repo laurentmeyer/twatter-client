@@ -98,7 +98,7 @@ export const MessageForm = ({
   const { data: sessionData } = useSession()
   const { data: user } = useCurrentUser(sessionData?.jwt)
   const minutesLate = useMinutesLate()
-  const imageUrl = user?.author.image?.url ?? '/empty.jpeg'
+  const imageUrl = user?.author.imageUrl ?? '/empty.jpeg'
 
   const addTweet = async () => {
     setIsSendDisabled(true)
@@ -151,7 +151,7 @@ export const MessageForm = ({
         <Image
           style={{ borderRadius: '50%' }}
           src={imageUrl}
-          alt={user?.author.image?.alternativeText ?? user?.author.handle}
+          alt={user?.author.imageAlt ?? user?.author.handle}
           width={49}
           height={49}
         />

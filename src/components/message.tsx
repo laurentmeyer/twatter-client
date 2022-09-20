@@ -112,7 +112,6 @@ export const Message = ({ message }: Props) => {
   const { text, author, image, isReply } = message
   const queryClient = useQueryClient()
   const channel = useChannel('messages')
-  const authorImageUrl = author?.image?.url ?? '/empty.jpeg'
 
   useEvent(channel, 'post', async (data?: string) => {
     if (data === 'invalidate')
@@ -121,13 +120,15 @@ export const Message = ({ message }: Props) => {
 
   if (!author) throw new Error(`Message ${message.id} has no author`)
 
+  const authorImageUrl = author.imageUrl ?? '/empty.jpeg'
+
   return (
     <StyledMessageWrapper>
       <StyledAuthorImageDiv>
         <Image
           style={{ borderRadius: '50%', objectFit: 'cover' }}
           src={authorImageUrl}
-          alt={author.image?.alternativeText ?? author.handle}
+          alt={author.imageAlt ?? author.handle}
           fill
         />
       </StyledAuthorImageDiv>

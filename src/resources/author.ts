@@ -2,7 +2,7 @@ import axios from 'axios'
 import { useSession } from 'next-auth/react'
 import { useQuery } from 'react-query'
 import { getStrapiURL } from '../../lib/api'
-import type { ImageResource, ImagePayload } from './image'
+import type { ImagePayload } from './image'
 import type { MessagePayload, MessageResource } from './message'
 import { authorPayloadToResource } from '../helpers/payloadToResource'
 import { useMinutesLate } from './time'
@@ -18,6 +18,7 @@ export interface AuthorPayload {
   firstName: string
   lastName: string
   followersCount: number | null
+  imageUrl: string | null
   description?: string
   image?: ImagePayload
   background?: ImagePayload
@@ -31,8 +32,10 @@ export interface AuthorResource {
   lastName: string
   messages: ReadonlyArray<MessageResource>
   followersCount: number
-  image?: ImageResource
-  background?: ImageResource
+  imageUrl?: string
+  imageAlt?: string
+  backgroundUrl?: string
+  backgroundAlt?: string
   description?: string
 }
 
