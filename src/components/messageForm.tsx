@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import { getStrapiURL } from '../../lib/api'
 import { MILLISECONDS_PER_MINUTE, useMinutesLate } from '../resources/time'
 import { useCurrentUser } from '../resources/user'
-import Image from 'next/image'
+import Image from 'next/future/image'
 import { useState } from 'react'
 import { Button } from './button'
 import SvgIcon from './svgIcon'
@@ -32,6 +32,9 @@ const photoPath = [
  */
 
 const StyledImageWrapper = styled.div`
+  position: relative;
+  height: 49px;
+  width: 49px;
   margin-right: 8px;
 `
 
@@ -98,7 +101,6 @@ export const MessageForm = ({
   const { data: sessionData } = useSession()
   const { data: user } = useCurrentUser(sessionData?.jwt)
   const minutesLate = useMinutesLate()
-  const imageUrl = user?.author.imageUrl || '/empty.jpeg'
 
   const addTweet = async () => {
     setIsSendDisabled(true)
@@ -147,15 +149,16 @@ export const MessageForm = ({
 
   return (
     <>
-      <StyledImageWrapper>
-        <Image
-          style={{ borderRadius: '50%' }}
-          src={imageUrl}
-          alt={user?.author.imageAlt || user?.author.handle}
-          width={49}
-          height={49}
-        />
-      </StyledImageWrapper>
+      <div>
+        <StyledImageWrapper>
+          <Image
+            style={{ borderRadius: '50%', objectFit: 'cover' }}
+            src={user?.author.imageUrl || '/empty.jpeg'}
+            alt={user?.author.imageAlt || user?.author.handle}
+            fill
+          />
+        </StyledImageWrapper>
+      </div>
       <StyledFormWrapper>
         <StyledTextArea
           rows={5}
