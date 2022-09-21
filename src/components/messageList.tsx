@@ -44,7 +44,12 @@ export const MessageList = ({ messages }: Props) => {
           )
 
         return (
-          <Link key={message.id} href={`/messages/${message.id}`} passHref>
+          <Link
+            key={message.id}
+            href={`/messages/${message.id}`}
+            passHref
+            onClick={() => alert('list')}
+          >
             <StyledSpan cursor>
               <Message message={message} />
             </StyledSpan>

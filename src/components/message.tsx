@@ -203,6 +203,10 @@ function tokenize(text: string): ReactNode {
           key={token}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={(e) => {
+            e.stopPropagation()
+            e.nativeEvent.stopImmediatePropagation()
+          }}
         >
           {token}
         </StyledTokenAnchor>
