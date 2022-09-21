@@ -40,14 +40,14 @@ const StyledMetadataDiv = styled.div`
   display: flex;
 `
 
-const StyledAuthorNameAnchor = styled.a`
+const StyledAuthorNameAnchor = styled.a<{ disabled: boolean }>`
   font-size: 15px;
   font-weight: 700;
   margin-right: 8px;
 
   &:hover {
-    text-decoration: underline;
-    cursor: pointer;
+    text-decoration: ${(p) => (p.disabled ? 'auto' : 'underline')};
+    cursor: ${(p) => (p.disabled ? 'not-allowed' : 'pointer')};
   }
 `
 
@@ -119,9 +119,18 @@ export const Message = ({ message }: Props) => {
       queryClient.invalidateQueries(['messages', message.id])
   })
 
-  if (!author) throw new Error(`Message ${message.id} has no author`)
+  const authorImageUrl = author
+    ? author.imageUrl || '/empty.jpeg'
+    : '/unknown.png'
 
-  const authorImageUrl = author.imageUrl || '/empty.jpeg'
+  let authorLink = (
+    <StyledAuthorNameAnchor aria-disabled={!author} disabled={!author}>
+      {author?.displayName || 'Undefined'}
+    </StyledAuthorNameAnchor>
+  )
+
+  if (author)
+    authorLink = <Link href={`/authors/${author.id}`}>{authorLink}</Link>
 
   return (
     <StyledMessageWrapper>
@@ -129,18 +138,16 @@ export const Message = ({ message }: Props) => {
         <Image
           style={{ borderRadius: '50%', objectFit: 'cover' }}
           src={authorImageUrl}
-          alt={author.imageAlt || author.handle}
+          alt={author?.imageAlt || author?.handle || 'unknown author'}
           fill
         />
       </StyledAuthorImageDiv>
       <StyledContentDiv>
         <StyledMetadataDiv>
-          <Link href={`/authors/${author.id}`}>
-            <StyledAuthorNameAnchor>
-              {author.displayName}
-            </StyledAuthorNameAnchor>
-          </Link>
-          <StyledAuthorHandleDiv>{`@${author.handle}`}</StyledAuthorHandleDiv>
+          {authorLink}
+          <StyledAuthorHandleDiv>{`@${
+            author?.handle || 'undefined'
+          }`}</StyledAuthorHandleDiv>
           <StyledTimeDiv>
             {message.time.toLocaleString(DateTime.TIME_SIMPLE)}
           </StyledTimeDiv>

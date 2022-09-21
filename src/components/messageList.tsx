@@ -36,7 +36,7 @@ export const MessageList = ({ messages }: Props) => {
   return (
     <>
       {messages.map((message) => {
-        if (message.isReply)
+        if (message.isReply || !message.author)
           return (
             <StyledSpan>
               <Message key={message.id} message={message} />
