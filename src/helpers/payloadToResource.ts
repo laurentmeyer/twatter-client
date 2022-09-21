@@ -35,24 +35,22 @@ export const authorPayloadToResource = (
     messages = [],
   } = data
 
-  const sanitizeUrl = (url: string | undefined | null) =>
-    url === 'null' || !url ? undefined : url
-
   const image = data.image && imagePayloadToResource(data.image)
-  const imageUrl = image?.url || sanitizeUrl(data.imageUrl)
+  const imageUrl = image?.url || sanitize(data.imageUrl)
   const backgroundImage = background && imagePayloadToResource(background)
 
   return {
     id: data.id,
     handle,
-    firstName,
-    lastName,
-    description,
+    firstName: sanitize(firstName),
+    lastName: sanitize(lastName),
+    displayName: firstName && lastName ? `${firstName} ${lastName}` : handle,
+    description: sanitize(description),
     followersCount: followersCount || 0,
-    imageUrl,
-    imageAlt: image && image.alternativeText,
-    backgroundUrl: backgroundImage?.url,
-    backgroundAlt: backgroundImage?.alternativeText,
+    imageUrl: sanitize(imageUrl),
+    imageAlt: sanitize(image && image.alternativeText),
+    backgroundUrl: sanitize(backgroundImage?.url),
+    backgroundAlt: sanitize(backgroundImage?.alternativeText),
     messages: messages
       .map((message) => messagePayloadToResource(message, minutesLate))
       .filter(isDefined),
@@ -95,4 +93,12 @@ export const messagePayloadToResource = (
       .map((r) => messagePayloadToResource(r, minutesLate))
       .filter(isDefined),
   }
+}
+
+/*
+ * Helpers.
+ */
+
+function sanitize(s: string | undefined | null) {
+  return s === 'null' || !s ? '' : s
 }

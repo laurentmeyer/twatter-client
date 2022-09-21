@@ -121,7 +121,7 @@ export const Message = ({ message }: Props) => {
 
   if (!author) throw new Error(`Message ${message.id} has no author`)
 
-  const authorImageUrl = author.imageUrl ?? '/empty.jpeg'
+  const authorImageUrl = author.imageUrl || '/empty.jpeg'
 
   return (
     <StyledMessageWrapper>
@@ -129,14 +129,16 @@ export const Message = ({ message }: Props) => {
         <Image
           style={{ borderRadius: '50%', objectFit: 'cover' }}
           src={authorImageUrl}
-          alt={author.imageAlt ?? author.handle}
+          alt={author.imageAlt || author.handle}
           fill
         />
       </StyledAuthorImageDiv>
       <StyledContentDiv>
         <StyledMetadataDiv>
           <Link href={`/authors/${author.id}`}>
-            <StyledAuthorNameAnchor>{`${author.firstName} ${author.lastName}`}</StyledAuthorNameAnchor>
+            <StyledAuthorNameAnchor>
+              {author.displayName}
+            </StyledAuthorNameAnchor>
           </Link>
           <StyledAuthorHandleDiv>{`@${author.handle}`}</StyledAuthorHandleDiv>
           <StyledTimeDiv>
@@ -166,7 +168,6 @@ export const Message = ({ message }: Props) => {
               {message.replies.length}
             </StyledIconWrapper>
           )}
-          {/* {!isReply && maybeCommentLink} */}
           <StyledIconWrapper>
             <SvgIcon
               paths={likePath}
@@ -197,7 +198,12 @@ function tokenize(text: string): ReactNode {
 
     if (token.match(regexp))
       nodes.push(
-        <StyledTokenAnchor href={token} key={token}>
+        <StyledTokenAnchor
+          href={token}
+          key={token}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           {token}
         </StyledTokenAnchor>
       )

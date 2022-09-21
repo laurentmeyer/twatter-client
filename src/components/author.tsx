@@ -51,8 +51,7 @@ export const Author = ({ author }: Props) => {
     imageUrl,
     imageAlt,
     backgroundUrl,
-    firstName,
-    lastName,
+    displayName,
     description,
     followersCount,
   } = author
@@ -64,15 +63,12 @@ export const Author = ({ author }: Props) => {
       author: author,
     }))
 
-  const displayName =
-    firstName && lastName ? `${firstName} ${lastName}` : handle
-
   return (
     <>
       <StyledBottomMarginWrapper>
         <StyledBackgroudWrapper>
           <Image
-            src={backgroundUrl ?? '/background.jpg'}
+            src={backgroundUrl || '/background.jpg'}
             alt={'background'}
             fill
           />
@@ -86,8 +82,8 @@ export const Author = ({ author }: Props) => {
                 objectFit: 'cover',
                 backgroundColor: 'grey',
               }}
-              src={imageUrl ?? '/empty.jpeg'}
-              alt={imageAlt ?? handle}
+              src={imageUrl || '/empty.jpeg'}
+              alt={imageAlt || handle}
               fill
             />
           </Avatar>

@@ -15,11 +15,11 @@ import { isDefined } from '../../lib/utils'
 export interface AuthorPayload {
   id: number
   handle: string
-  firstName: string
-  lastName: string
+  firstName: string | null
+  lastName: string | null
   followersCount: number | null
   imageUrl: string | null
-  description?: string
+  description: string | null
   image?: ImagePayload
   background?: ImagePayload
   messages?: ReadonlyArray<MessagePayload>
@@ -28,15 +28,16 @@ export interface AuthorPayload {
 export interface AuthorResource {
   id: number
   handle: string
+  displayName: string
   firstName: string
   lastName: string
   messages: ReadonlyArray<MessageResource>
   followersCount: number
-  imageUrl?: string
-  imageAlt?: string
-  backgroundUrl?: string
-  backgroundAlt?: string
-  description?: string
+  imageUrl: string
+  imageAlt: string
+  backgroundUrl: string
+  backgroundAlt: string
+  description: string
 }
 
 /*
