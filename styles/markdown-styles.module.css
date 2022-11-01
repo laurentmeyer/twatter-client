@@ -1,0 +1,31 @@
+.reactMarkDown {
+  display: grid;
+
+  font-family: 'Marr Sans Condensed', 'DINCondensed-Bold', 'Roboto Condensed',
+    'Arial Narrow', sans-serif;
+}
+
+.reactMarkDown h1 {
+  justify-self: center;
+  text-align: center;
+  font-size: 2.4rem;
+}
+
+.reactMarkDown h2 {
+  color: #2a303b;
+  font-size: 1.4rem;
+  font-weight: 600;
+  line-height: 2.2rem;
+}
+
+.reactMarkDown p {
+  display: grid;
+  font-size: 1rem;
+  font-family: 'Marr Sans', Helvetica, Arial, 'Roboto', sans-serif;
+}
+
+.reactMarkDown img {
+  max-width: 90%;
+  max-height: 350px;
+  justify-self: center;
+}

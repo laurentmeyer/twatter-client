@@ -17,7 +17,7 @@ export interface ArticlePayload {
   title: string
   content: string
   time: string
-  source: SourcePayload
+  source: SourcePayload | null
 }
 
 export interface ArticleResource {
@@ -25,7 +25,7 @@ export interface ArticleResource {
   title: string
   content: string
   time: DateTime
-  source: SourceResource
+  source?: SourceResource
 }
 
 /*

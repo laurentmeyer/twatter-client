@@ -133,7 +133,7 @@ export const articlePayloadToResource = (
     id,
     content,
     time,
-    source: sourcePayloadToResource(source),
+    source: source ? sourcePayloadToResource(source) : undefined,
     title,
   }
 }
