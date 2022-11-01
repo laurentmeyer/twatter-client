@@ -108,12 +108,22 @@ const paths = {
 }
 
 /*
+ * Props.
+ */
+
+interface LayoutProps {
+  children: ReactNode
+}
+
+/*
  * Component.
  */
 
-export default function Layout(args: { children: ReactNode }) {
+export default function Layout({ children }: LayoutProps) {
   const { status: sessionStatus, data: sessionData } = useSession()
   const { data: userData } = useCurrentUser(sessionData?.jwt)
+  const router = useRouter()
+  const isGoggle = router.pathname.startsWith('/news')
 
   if (sessionStatus === 'loading') return <>{'Loading ...'}</>
 
@@ -123,27 +133,38 @@ export default function Layout(args: { children: ReactNode }) {
   return (
     <StyledWrapper>
       <StyledRightColumn>
-        <StyledHeader>
-          <Link href="/" passHref>
-            <LogoButton />
-          </Link>
-          <Link href="/" passHref>
-            <HomeButton />
-          </Link>
-          <Link href={`/authors/${userData?.author.id}`} passHref>
-            <ProfileButton />
-          </Link>
-          <StyledButton
-            onClick={() => signOut()}
-            width="100%"
-            padding="12px 30px"
-          >
-            Sign out
-          </StyledButton>
-        </StyledHeader>
+        {isGoggle ? (
+          <StyledHeader>
+            <Link href="/" passHref>
+              <TwatterButton />
+            </Link>
+          </StyledHeader>
+        ) : (
+          <StyledHeader>
+            <Link href="/" passHref>
+              <LogoButton />
+            </Link>
+            <Link href="/" passHref>
+              <HomeButton />
+            </Link>
+            <Link href={`/authors/${userData?.author.id}`} passHref>
+              <ProfileButton />
+            </Link>
+            <StyledButton
+              onClick={() => signOut()}
+              width="100%"
+              padding="12px 30px"
+            >
+              Sign out
+            </StyledButton>
+            <Link href={`/news`} passHref>
+              <GoggleButton />
+            </Link>
+          </StyledHeader>
+        )}
       </StyledRightColumn>
       <StyledCenterColumn>
-        <main>{args.children}</main>
+        <main>{children}</main>
       </StyledCenterColumn>
     </StyledWrapper>
   )
@@ -196,6 +217,31 @@ const HomeButton = React.forwardRef<
 
 HomeButton.displayName = 'Home Button'
 
+const TwatterButton = React.forwardRef<
+  HTMLAnchorElement,
+  React.HTMLProps<HTMLAnchorElement>
+>(({ onClick, href }, ref) => {
+  const router = useRouter()
+
+  return (
+    <a href={href} onClick={onClick} ref={ref}>
+      <MenuItem className={router.asPath === href ? 'active' : ''}>
+        <div>
+          <SvgIcon
+            paths={paths.home}
+            width="26.25px"
+            height="26.25px"
+            fill="rgb(0, 0, 0)"
+          />
+          <MenuTitle>{'Twatter'}</MenuTitle>
+        </div>
+      </MenuItem>
+    </a>
+  )
+})
+
+TwatterButton.displayName = 'Twatter Button'
+
 const ProfileButton = React.forwardRef<
   HTMLAnchorElement,
   React.HTMLProps<HTMLAnchorElement>
@@ -220,3 +266,26 @@ const ProfileButton = React.forwardRef<
 })
 
 ProfileButton.displayName = 'Profile Button'
+
+const GoggleButton = React.forwardRef<
+  HTMLAnchorElement,
+  React.HTMLProps<HTMLAnchorElement>
+>(({ onClick, href }, ref) => {
+  return (
+    <a href={href} onClick={onClick} ref={ref}>
+      <MenuItem>
+        <div>
+          <SvgIcon
+            paths={paths.profile}
+            width="26.25px"
+            height="26.25px"
+            fill="rgb(0, 0, 0)"
+          />
+          <MenuTitle>{'Goggle news'}</MenuTitle>
+        </div>
+      </MenuItem>
+    </a>
+  )
+})
+
+GoggleButton.displayName = 'Google Button'

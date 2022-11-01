@@ -1,8 +1,10 @@
 import { DateTime, Duration } from 'luxon'
 import { isDefined } from '../../lib/utils'
+import { ArticlePayload, ArticleResource } from '../resources/article'
 import type { AuthorPayload, AuthorResource } from '../resources/author'
 import type { ImagePayload, ImageResource } from '../resources/image'
 import { MessagePayload, MessageResource } from '../resources/message'
+import { SourcePayload, SourceResource } from '../resources/source'
 import { MILLISECONDS_PER_MINUTE } from '../resources/time'
 
 // This file avoids circular dependencies.
@@ -58,7 +60,7 @@ export const authorPayloadToResource = (
 }
 
 /*
- * Helpers.
+ * Messages.
  */
 
 export const messagePayloadToResource = (
@@ -92,6 +94,47 @@ export const messagePayloadToResource = (
     replies: replies
       .map((r) => messagePayloadToResource(r, minutesLate))
       .filter(isDefined),
+  }
+}
+
+/*
+ * Sources.
+ */
+
+export const sourcePayloadToResource = (
+  data: SourcePayload
+): SourceResource => {
+  const { id, name, logo } = data
+
+  return {
+    id,
+    name,
+    logo: logo && imagePayloadToResource(logo),
+  }
+}
+
+/*
+ * Articles.
+ */
+
+export const articlePayloadToResource = (
+  data: ArticlePayload,
+  minutesLate: number
+): ArticleResource | undefined => {
+  const { id, source, title, content } = data
+
+  const time = DateTime.fromISO(data.time).plus(
+    Duration.fromMillis(MILLISECONDS_PER_MINUTE * minutesLate)
+  )
+
+  if (time > DateTime.now()) return undefined
+
+  return {
+    id,
+    content,
+    time,
+    source: sourcePayloadToResource(source),
+    title,
   }
 }
 
