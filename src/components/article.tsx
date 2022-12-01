@@ -18,9 +18,17 @@ const StyledHeader = styled.h1`
   font-size: 2.4rem;
 `
 
+/*
+ * Types.
+ */
+
 interface ArticleProps {
   article: ArticleResource
 }
+
+/*
+ * Component.
+ */
 
 export const Article = ({ article }: ArticleProps) => (
   <StyledWrapper>

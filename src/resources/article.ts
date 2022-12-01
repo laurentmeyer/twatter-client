@@ -81,7 +81,7 @@ export const useArticles = () => {
   }
 
   return useQuery<ReadonlyArray<ArticleResource>>(
-    ['messages', 'list'],
+    ['articles', 'list'],
     fetchArticlesAsync,
     {
       refetchInterval: 15 * MILLISECONDS_PER_SECOND,
