@@ -3,7 +3,7 @@ import CredentialsProvider from 'next-auth/providers/credentials'
 
 export default NextAuth({
   theme: {
-    logo: 'https://upload.wikimedia.org/wikipedia/fr/thumb/5/5c/Engie_logo.svg/1200px-Engie_logo.svg.png',
+    logo: 'https://twatter-live.s3.eu-west-3.amazonaws.com/LOGO+ARJUNA+BASELINE+RVB.png',
   },
   providers: [
     CredentialsProvider({
