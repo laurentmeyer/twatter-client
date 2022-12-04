@@ -5,13 +5,14 @@ import { useMessages } from '../src/resources/message'
 import { useChannel, useEvent } from '@harelpls/use-pusher'
 import styled from 'styled-components'
 import { StyledBottomMarginWrapper } from '../styles/common'
+import { NextPage } from 'next'
 
 const StyledWrapper = styled.div`
   padding: 15px;
   display: flex;
 `
 
-export const TwatterHome = () => {
+export const TwatterHome: NextPage = () => {
   const { data: messages, status: status } = useMessages()
   const queryClient = useQueryClient()
   const channel = useChannel('messages')
@@ -58,3 +59,5 @@ export const TwatterHome = () => {
       throw new Error('Unreachable code')
   }
 }
+
+export default TwatterHome
