@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import { getStrapiURL } from '../../lib/api'
 import { MILLISECONDS_PER_MINUTE, useMinutesLate } from '../resources/time'
 import { useCurrentUser } from '../resources/user'
-import Image from 'next/future/image'
+import Image from 'next/image'
 import { useState } from 'react'
 import { Button } from './button'
 import SvgIcon from './svgIcon'
@@ -154,7 +154,7 @@ export const MessageForm = ({
           <Image
             style={{ borderRadius: '50%', objectFit: 'cover' }}
             src={user?.author.imageUrl || '/empty.jpeg'}
-            alt={user?.author.imageAlt || user?.author.handle}
+            alt={user?.author.imageAlt || user?.author.handle || 'alt'}
             fill
           />
         </StyledImageWrapper>

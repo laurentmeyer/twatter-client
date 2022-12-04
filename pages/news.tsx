@@ -1,4 +1,4 @@
-import Image from 'next/future/image'
+import Image from 'next/image'
 import { NextPage } from 'next'
 import Link from 'next/link'
 import styled from 'styled-components'
