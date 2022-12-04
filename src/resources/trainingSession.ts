@@ -3,6 +3,7 @@ import { useSession } from 'next-auth/react'
 import { useQuery } from 'react-query'
 import { getStrapiURL } from '../../lib/api'
 import { isDefined } from '../../lib/utils'
+import { ImageResource } from './image'
 
 /*
  * Constants.
@@ -12,29 +13,38 @@ export const MILLISECONDS_PER_MINUTE = 60 * 1000
 export const MILLISECONDS_PER_SECOND = 1000
 
 /*
+ * Types.
+ */
+
+interface TrainingSession {
+  minutesLate: number
+  clientLogo: ImageResource
+}
+
+/*
  * Hooks.
  */
 
-export const useMinutesLate = () => {
+export const useTrainingSession = () => {
   const { data: session } = useSession()
 
-  const fetchMinutesLateAsync = async () => {
+  const fetchTrainingSessionAsync = async () => {
     const { data } = await axios.get(getStrapiURL('/api/training-session'), {
       headers: { Authorization: `Bearer ${session?.jwt}` },
     })
 
-    const { minutesLate } = data.data.attributes
-
-    if (!isDefined(minutesLate)) {
-      console.log('Cannot fetch minutesLate')
+    if (!isDefined(data)) {
+      console.log('Cannot fetch training session')
     }
 
-    return minutesLate
+    const { minutesLate, clientLogo } = data
+
+    return { minutesLate, clientLogo }
   }
 
-  const { data } = useQuery<number>(
+  const { data } = useQuery<TrainingSession>(
     ['training-session', 'minutesLate'],
-    fetchMinutesLateAsync,
+    fetchTrainingSessionAsync,
     {
       enabled: isDefined(session),
     }

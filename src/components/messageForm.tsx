@@ -3,7 +3,10 @@ import { DateTime, Duration } from 'luxon'
 import { useSession } from 'next-auth/react'
 import styled from 'styled-components'
 import { getStrapiURL } from '../../lib/api'
-import { MILLISECONDS_PER_MINUTE, useMinutesLate } from '../resources/time'
+import {
+  MILLISECONDS_PER_MINUTE,
+  useTrainingSession,
+} from '../resources/trainingSession'
 import { useCurrentUser } from '../resources/user'
 import Image from 'next/image'
 import { useState } from 'react'
@@ -100,7 +103,7 @@ export const MessageForm = ({
 
   const { data: sessionData } = useSession()
   const { data: user } = useCurrentUser(sessionData?.jwt)
-  const minutesLate = useMinutesLate()
+  const trainingSession = useTrainingSession()
 
   const addTweet = async () => {
     setIsSendDisabled(true)
@@ -108,7 +111,9 @@ export const MessageForm = ({
       author: user?.author.id,
       time: DateTime.now()
         .minus(
-          Duration.fromMillis(MILLISECONDS_PER_MINUTE * (minutesLate || 0))
+          Duration.fromMillis(
+            MILLISECONDS_PER_MINUTE * (trainingSession?.minutesLate ?? 0)
+          )
         )
         .toLocaleString(DateTime.TIME_24_WITH_SECONDS),
       text,

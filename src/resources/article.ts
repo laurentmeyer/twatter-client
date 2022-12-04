@@ -6,7 +6,7 @@ import { getStrapiURL } from '../../lib/api'
 import { isDefined } from '../../lib/utils'
 import { articlePayloadToResource } from '../helpers/payloadToResource'
 import { SourcePayload, SourceResource } from './source'
-import { MILLISECONDS_PER_SECOND, useMinutesLate } from './time'
+import { MILLISECONDS_PER_SECOND, useTrainingSession } from './trainingSession'
 
 /*
  * Types.
@@ -35,24 +35,24 @@ export interface ArticleResource {
 export const useArticle = (id: number) => {
   // Should be a valid session, already checked by layout
   const { data: session } = useSession()
-  const minutesLate = useMinutesLate()
+  const trainingSession = useTrainingSession()
 
   const fetchArticleAsync = async () => {
     const { data } = await axios.get(getStrapiURL(`/api/articles/${id}`), {
       headers: { Authorization: `Bearer ${session?.jwt}` },
     })
 
-    if (!isDefined(minutesLate))
+    if (!isDefined(trainingSession))
       throw new Error('Cannot fetch article without minutesLate')
 
-    return articlePayloadToResource(data, minutesLate)
+    return articlePayloadToResource(data, trainingSession.minutesLate)
   }
 
   return useQuery<ArticleResource | undefined>(
     ['article', id],
     fetchArticleAsync,
     {
-      enabled: Number.isFinite(id) && isDefined(minutesLate),
+      enabled: Number.isFinite(id) && isDefined(trainingSession),
     }
   )
 }
@@ -60,7 +60,7 @@ export const useArticle = (id: number) => {
 export const useArticles = () => {
   // Should be a valid session, already checked by layout
   const { data: session } = useSession()
-  const minutesLate = useMinutesLate()
+  const trainingSession = useTrainingSession()
 
   const fetchArticlesAsync = async () => {
     const { data } = await axios.get(
@@ -70,12 +70,12 @@ export const useArticles = () => {
       }
     )
 
-    if (!isDefined(minutesLate))
+    if (!isDefined(trainingSession))
       throw new Error('Cannot fetch articles without minutesLate')
 
     return data
       .map((payload: ArticlePayload) =>
-        articlePayloadToResource(payload, minutesLate)
+        articlePayloadToResource(payload, trainingSession.minutesLate)
       )
       .filter(isDefined)
   }
@@ -85,7 +85,7 @@ export const useArticles = () => {
     fetchArticlesAsync,
     {
       refetchInterval: 15 * MILLISECONDS_PER_SECOND,
-      enabled: isDefined(minutesLate),
+      enabled: isDefined(trainingSession),
     }
   )
 }

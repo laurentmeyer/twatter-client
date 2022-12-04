@@ -7,7 +7,7 @@ import { isDefined } from '../../lib/utils'
 import { messagePayloadToResource } from '../helpers/payloadToResource'
 import type { AuthorPayload, AuthorResource } from './author'
 import { ImagePayload, ImageResource } from './image'
-import { MILLISECONDS_PER_SECOND, useMinutesLate } from './time'
+import { MILLISECONDS_PER_SECOND, useTrainingSession } from './trainingSession'
 
 /*
  * Types.
@@ -42,24 +42,24 @@ export interface MessageResource {
 export const useMessage = (id: number) => {
   // Should be a valid session, already checked by layout
   const { data: session } = useSession()
-  const minutesLate = useMinutesLate()
+  const trainingSession = useTrainingSession()
 
   const fetchMessageAsync = async () => {
     const { data } = await axios.get(getStrapiURL(`/api/messages/${id}`), {
       headers: { Authorization: `Bearer ${session?.jwt}` },
     })
 
-    if (!isDefined(minutesLate))
+    if (!isDefined(trainingSession))
       throw new Error('Cannot fetch message without minutesLate')
 
-    return messagePayloadToResource(data, minutesLate)
+    return messagePayloadToResource(data, trainingSession.minutesLate)
   }
 
   return useQuery<MessageResource | undefined>(
     ['messages', id],
     fetchMessageAsync,
     {
-      enabled: Number.isFinite(id) && isDefined(minutesLate),
+      enabled: Number.isFinite(id) && isDefined(trainingSession),
     }
   )
 }
@@ -67,7 +67,7 @@ export const useMessage = (id: number) => {
 export const useMessages = () => {
   // Should be a valid session, already checked by layout
   const { data: session } = useSession()
-  const minutesLate = useMinutesLate()
+  const trainingSession = useTrainingSession()
 
   const fetchMessagesAsync = async () => {
     const { data } = await axios.get(
@@ -77,12 +77,12 @@ export const useMessages = () => {
       }
     )
 
-    if (!isDefined(minutesLate))
+    if (!isDefined(trainingSession))
       throw new Error('Cannot fetch messages without minutesLate')
 
     return data
       .map((payload: MessagePayload) =>
-        messagePayloadToResource(payload, minutesLate)
+        messagePayloadToResource(payload, trainingSession.minutesLate)
       )
       .filter(isDefined)
   }
@@ -92,7 +92,7 @@ export const useMessages = () => {
     fetchMessagesAsync,
     {
       refetchInterval: 15 * MILLISECONDS_PER_SECOND,
-      enabled: isDefined(minutesLate),
+      enabled: isDefined(trainingSession),
     }
   )
 }

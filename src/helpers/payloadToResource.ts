@@ -5,7 +5,7 @@ import type { AuthorPayload, AuthorResource } from '../resources/author'
 import type { ImagePayload, ImageResource } from '../resources/image'
 import { MessagePayload, MessageResource } from '../resources/message'
 import { SourcePayload, SourceResource } from '../resources/source'
-import { MILLISECONDS_PER_MINUTE } from '../resources/time'
+import { MILLISECONDS_PER_MINUTE } from '../resources/trainingSession'
 
 // This file avoids circular dependencies.
 
