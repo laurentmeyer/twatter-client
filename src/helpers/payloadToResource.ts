@@ -104,12 +104,13 @@ export const messagePayloadToResource = (
 export const sourcePayloadToResource = (
   data: SourcePayload
 ): SourceResource => {
-  const { id, name, logo } = data
+  const { id, name, logo, icon } = data
 
   return {
     id,
     name,
     logo: logo && imagePayloadToResource(logo),
+    icon: icon && imagePayloadToResource(icon),
   }
 }
 

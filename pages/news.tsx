@@ -3,6 +3,8 @@ import { NextPage } from 'next'
 import Link from 'next/link'
 import styled from 'styled-components'
 import { ArticleResource, useArticles } from '../src/resources/article'
+import RemoveMarkdown from 'remove-markdown'
+import { DateTime } from 'luxon'
 
 /*
  * Styles.
@@ -15,21 +17,24 @@ const StyledListWrapper = styled.div`
   row-gap: 30px;
 `
 
-const StyledTitleWrapper = styled.div`
+const StyledArticleTitleWrapper = styled.div`
   grid-area: title;
   color: #1a0dab;
   font-size: 20px;
   font-weight: 400;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 `
 
 const StyledArticleWrapper = styled.div`
   display: grid;
   grid-template-areas: 'article-details thumbnail';
   grid-template-columns: auto 92px;
-  grid-template-rows: 92px;
   column-gap: 30px;
 
-  &:hover ${StyledTitleWrapper} {
+  &:hover ${StyledArticleTitleWrapper} {
     text-decoration: underline;
   }
 `
@@ -37,6 +42,7 @@ const StyledArticleWrapper = styled.div`
 const StyledThumbnailWrapper = styled.div`
   grid-area: thumbnail;
   position: relative;
+  height: 92px;
 `
 
 const StyledArticleDetailsWrapper = styled.div`
@@ -44,6 +50,8 @@ const StyledArticleDetailsWrapper = styled.div`
 
   display: grid;
   grid-template-areas: 'source' 'title' 'excerpt' 'date';
+  grid-auto-rows: auto;
+  row-gap: 4px;
 `
 
 const StyledArticleSourceWrapper = styled.div`
@@ -71,6 +79,14 @@ const StyledSourceNameWrapper = styled.div`
 
 const StyledArticleExcerptWrapper = styled.div`
   grid-area: excerpt;
+
+  text-overflow: ellipsis;
+  overflow: hidden;
+  // Addition lines for 2 line or multiline ellipsis
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  white-space: normal;
 `
 
 const StyledArticleDateWrapper = styled.div`
@@ -98,7 +114,21 @@ export default GoggleHome
  */
 
 function renderArticleLink(article: ArticleResource) {
-  const { source, thumbnail } = article
+  const { source, thumbnail, time } = article
+
+  const minutes = Math.floor(DateTime.now().diff(time, ['minutes']).minutes)
+  const hours = Math.floor(minutes / 60)
+
+  let delayMessage: string
+  if (hours === 1) {
+    delayMessage = 'One hour ago'
+  } else if (hours > 1) {
+    delayMessage = `${hours} hours ago`
+  } else if (minutes === 1) {
+    delayMessage = 'One minute ago'
+  } else {
+    delayMessage = `${minutes} minutes ago`
+  }
 
   return (
     <Link key={article.id} href={`/news/${article.id}`} passHref>
@@ -107,23 +137,24 @@ function renderArticleLink(article: ArticleResource) {
           <StyledArticleSourceWrapper>
             <StyledSourceLogoWrapper>
               <Image
-                src={source?.logo?.url || '/empty.jpeg'}
-                alt={source?.logo?.alternativeText || ''}
+                src={source?.icon?.url || '/empty.jpeg'}
+                alt={source?.icon?.alternativeText || ''}
                 fill
-                objectFit="scale-down"
               />
             </StyledSourceLogoWrapper>
             <StyledSourceNameWrapper>
               {source?.name || 'Le Parisien'}
             </StyledSourceNameWrapper>
           </StyledArticleSourceWrapper>
-          <StyledTitleWrapper>
+          <StyledArticleTitleWrapper>
             <Link href={`/news/${article.id}`}>{article.title}</Link>
-          </StyledTitleWrapper>
+          </StyledArticleTitleWrapper>
           <StyledArticleExcerptWrapper>
-            Trololololololo
+            {RemoveMarkdown(article.content, {
+              useImgAltText: false,
+            })}
           </StyledArticleExcerptWrapper>
-          <StyledArticleDateWrapper>3 days ago</StyledArticleDateWrapper>
+          <StyledArticleDateWrapper>{delayMessage}</StyledArticleDateWrapper>
         </StyledArticleDetailsWrapper>
         {thumbnail && (
           <StyledThumbnailWrapper>
