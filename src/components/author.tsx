@@ -26,6 +26,47 @@ const StyledBackgroudWrapper = styled.div`
   height: 150px;
 `
 
+const StyledNameWrapper = styled.div`
+  margin-top: 10px;
+  font-family: 'TwitterChirp', Arial, sans-serif;
+  font-size: 20px;
+  line-height: 24px;
+  font-weight: 800;
+`
+
+const StyledHandleWrapper = styled.div`
+  color: rgb(83, 100, 113);
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 400;
+`
+
+const StyledDescriptionWrapper = styled.div`
+  margin-top: 12px;
+
+  color: rgb(15, 20, 25);
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 400;
+`
+
+const StyledFollowersWrapper = styled.div`
+  margin-top: 12px;
+  margin-bottom: 12px;
+
+  color: rgb(83, 100, 113);
+  font-size: 14px;
+  line-height: 16px;
+  font-weight: 400;
+`
+
+const StyledFollowersCountSpan = styled.span`
+  color: rgb(15, 20, 25);
+  font-size: 14px;
+  line-height: 16px;
+  font-weight: 700;
+`
+
 const ImgFlex = styled.div`
   display: flex;
   justify-content: space-between;
@@ -89,13 +130,15 @@ export const Author = ({ author }: Props) => {
           </Avatar>
         </ImgFlex>
         <StyledAuthorInfoWrapper>
-          <h2>{displayName}</h2>
-          {`@${handle}`}
-          <br />
-          {description}
-          <br />
-          <strong>{followersCount.toString()}</strong>
-          {' followers'}
+          <StyledNameWrapper>{displayName}</StyledNameWrapper>
+          <StyledHandleWrapper>{`@${handle}`}</StyledHandleWrapper>
+          <StyledDescriptionWrapper>{description}</StyledDescriptionWrapper>
+          <StyledFollowersWrapper>
+            <StyledFollowersCountSpan>
+              {followersCount.toString()}
+            </StyledFollowersCountSpan>
+            {' Followers'}
+          </StyledFollowersWrapper>
         </StyledAuthorInfoWrapper>
       </StyledBottomMarginWrapper>
       <MessageList messages={messages} />
