@@ -121,7 +121,7 @@ export const articlePayloadToResource = (
   data: ArticlePayload,
   minutesLate: number
 ): ArticleResource | undefined => {
-  const { id, source, title, content } = data
+  const { id, source, title, content, thumbnail } = data
 
   const time = DateTime.fromISO(data.time).plus(
     Duration.fromMillis(MILLISECONDS_PER_MINUTE * minutesLate)
@@ -134,6 +134,7 @@ export const articlePayloadToResource = (
     content,
     time,
     source: source ? sourcePayloadToResource(source) : undefined,
+    thumbnail: thumbnail ? imagePayloadToResource(thumbnail) : undefined,
     title,
   }
 }

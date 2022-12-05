@@ -58,8 +58,8 @@ const StyledClientLogoContainer = styled.div`
 `
 
 const StyledCenterColumn = styled.div<{ isTwatter?: boolean }>`
-  flex-basis: ${(p) => (p.isTwatter ? '37.5%' : '50%')};
-  max-width: ${(p) => (p.isTwatter ? '37.5%' : '50%')};
+  flex-basis: ${(p) => (p.isTwatter ? '37.5%' : '45%')};
+  max-width: ${(p) => (p.isTwatter ? '37.5%' : '45%')};
   border-left: 1px solid rgb(230, 236, 240);
   border-right: 1px solid rgb(230, 236, 240);
 `

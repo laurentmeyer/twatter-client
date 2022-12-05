@@ -5,6 +5,7 @@ import { useQuery } from 'react-query'
 import { getStrapiURL } from '../../lib/api'
 import { isDefined } from '../../lib/utils'
 import { articlePayloadToResource } from '../helpers/payloadToResource'
+import { ImagePayload, ImageResource } from './image'
 import { SourcePayload, SourceResource } from './source'
 import { MILLISECONDS_PER_SECOND, useTrainingSession } from './trainingSession'
 
@@ -17,6 +18,7 @@ export interface ArticlePayload {
   title: string
   content: string
   time: string
+  thumbnail: ImagePayload | null
   source: SourcePayload | null
 }
 
@@ -25,6 +27,7 @@ export interface ArticleResource {
   title: string
   content: string
   time: DateTime
+  thumbnail?: ImageResource
   source?: SourceResource
 }
 
