@@ -1,27 +1,35 @@
 .reactMarkDown {
   display: grid;
-
-  font-family: 'Marr Sans Condensed', 'DINCondensed-Bold', 'Roboto Condensed',
-    'Arial Narrow', sans-serif;
+  font-family: Arial, 'Roboto', sans-serif;
 }
 
 .reactMarkDown h1 {
   justify-self: center;
   text-align: center;
-  font-size: 2.4rem;
+  font-size: 1.3rem;
+  font-weight: 600;
 }
 
 .reactMarkDown h2 {
   color: #2a303b;
-  font-size: 1.4rem;
-  font-weight: 600;
-  line-height: 2.2rem;
+  font-size: 1.2rem;
+  line-height: 1.2rem;
+}
+
+.reactMarkDown h3 {
+  color: #2a303b;
+  justify-self: center;
+  text-align: center;
+  font-style: italic;
+  font-size: 0.8rem;
+  font-weight: 200;
+  margin-top: 0px;
 }
 
 .reactMarkDown p {
   display: grid;
   font-size: 1rem;
-  font-family: 'Marr Sans', Helvetica, Arial, 'Roboto', sans-serif;
+  font-family: Arial, 'Roboto', sans-serif;
 }
 
 .reactMarkDown img {
