@@ -81,7 +81,7 @@ export const messagePayloadToResource = (
     Duration.fromMillis(MILLISECONDS_PER_MINUTE * minutesLate)
   )
 
-  if (time > DateTime.now()) return undefined
+  if (isAfterNow(time)) return undefined
 
   return {
     id,
@@ -128,7 +128,7 @@ export const articlePayloadToResource = (
     Duration.fromMillis(MILLISECONDS_PER_MINUTE * minutesLate)
   )
 
-  if (time > DateTime.now()) return undefined
+  if (isAfterNow(time)) return undefined
 
   return {
     id,
@@ -146,4 +146,12 @@ export const articlePayloadToResource = (
 
 function sanitize(s: string | undefined | null) {
   return s === 'null' || !s ? '' : s
+}
+
+function isAfterNow(time: DateTime) {
+  const minutes = 60 * time.hour + time.minute
+  const now = DateTime.now()
+  const minutesNow = 60 * now.hour + now.minute
+
+  return minutes >= minutesNow
 }
