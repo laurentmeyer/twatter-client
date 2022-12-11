@@ -66,6 +66,7 @@ const StyledTimeDiv = styled.div`
 
 const StyledMessageDiv = styled.div`
   margin-bottom: 10px;
+  overflow-wrap: break-word;
 `
 
 const StyledIconsDiv = styled.div`
