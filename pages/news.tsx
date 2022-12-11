@@ -143,7 +143,7 @@ function renderArticleLink(article: ArticleResource) {
               />
             </StyledSourceLogoWrapper>
             <StyledSourceNameWrapper>
-              {source?.name || 'Le Parisien'}
+              {source?.name || 'Media'}
             </StyledSourceNameWrapper>
           </StyledArticleSourceWrapper>
           <StyledArticleTitleWrapper>
