@@ -27,13 +27,22 @@
 }
 
 .reactMarkDown p {
-  display: grid;
+  display: inline;
   font-size: 1rem;
   font-family: Arial, 'Roboto', sans-serif;
+}
+
+.reactMarkDown a {
+  color: rgb(14, 92, 140);
+}
+
+.reactMarkDown a:hover {
+  text-decoration: underline;
 }
 
 .reactMarkDown img {
   max-width: 90%;
   max-height: 350px;
   justify-self: center;
+  text-align: center;
 }

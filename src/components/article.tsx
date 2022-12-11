@@ -4,6 +4,7 @@ import { ArticleResource } from '../resources/article'
 import styles from '../../styles/markdown-styles.module.css'
 import styled from 'styled-components'
 import Image from 'next/image'
+import remarkUnwrapImages from 'remark-unwrap-images'
 
 /*
  * Styles.
@@ -55,7 +56,11 @@ export const Article = ({ article }: ArticleProps) => {
         </StyledSourceLogoWrapper>
       )}
       <StyledHeader>{article.title}</StyledHeader>
-      <ReactMarkdown className={styles.reactMarkDown}>
+      <ReactMarkdown
+        className={styles.reactMarkDown}
+        remarkPlugins={[remarkUnwrapImages]}
+        linkTarget="_blank"
+      >
         {article.content}
       </ReactMarkdown>
     </StyledWrapper>
