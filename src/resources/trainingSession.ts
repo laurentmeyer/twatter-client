@@ -9,7 +9,6 @@ import { ImageResource } from './image'
  * Constants.
  */
 
-export const MILLISECONDS_PER_MINUTE = 60 * 1000
 export const MILLISECONDS_PER_SECOND = 1000
 
 /*
@@ -17,7 +16,6 @@ export const MILLISECONDS_PER_SECOND = 1000
  */
 
 interface TrainingSession {
-  minutesLate: number
   clientLogo: ImageResource
 }
 
@@ -37,13 +35,13 @@ export const useTrainingSession = () => {
       console.log('Cannot fetch training session')
     }
 
-    const { minutesLate, clientLogo } = data
+    const { clientLogo } = data
 
-    return { minutesLate, clientLogo }
+    return { clientLogo }
   }
 
   const { data } = useQuery<TrainingSession>(
-    ['training-session', 'minutesLate'],
+    ['training-session'],
     fetchTrainingSessionAsync,
     {
       enabled: isDefined(session),

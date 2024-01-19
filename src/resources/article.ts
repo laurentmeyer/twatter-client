@@ -7,7 +7,7 @@ import { isDefined } from '../../lib/utils'
 import { articlePayloadToResource } from '../helpers/payloadToResource'
 import { ImagePayload, ImageResource } from './image'
 import { SourcePayload, SourceResource } from './source'
-import { MILLISECONDS_PER_SECOND, useTrainingSession } from './trainingSession'
+import { MILLISECONDS_PER_SECOND } from './trainingSession'
 
 /*
  * Types.
@@ -38,24 +38,20 @@ export interface ArticleResource {
 export const useArticle = (id: number) => {
   // Should be a valid session, already checked by layout
   const { data: session } = useSession()
-  const trainingSession = useTrainingSession()
 
   const fetchArticleAsync = async () => {
     const { data } = await axios.get(getStrapiURL(`/api/articles/${id}`), {
       headers: { Authorization: `Bearer ${session?.jwt}` },
     })
 
-    if (!isDefined(trainingSession))
-      throw new Error('Cannot fetch article without minutesLate')
-
-    return articlePayloadToResource(data, trainingSession.minutesLate)
+    return articlePayloadToResource(data)
   }
 
   return useQuery<ArticleResource | undefined>(
     ['article', id],
     fetchArticleAsync,
     {
-      enabled: Number.isFinite(id) && isDefined(trainingSession),
+      enabled: Number.isFinite(id),
     }
   )
 }
@@ -63,7 +59,6 @@ export const useArticle = (id: number) => {
 export const useArticles = () => {
   // Should be a valid session, already checked by layout
   const { data: session } = useSession()
-  const trainingSession = useTrainingSession()
 
   const fetchArticlesAsync = async () => {
     const { data } = await axios.get(
@@ -73,14 +68,7 @@ export const useArticles = () => {
       }
     )
 
-    if (!isDefined(trainingSession))
-      throw new Error('Cannot fetch articles without minutesLate')
-
-    return data
-      .map((payload: ArticlePayload) =>
-        articlePayloadToResource(payload, trainingSession.minutesLate)
-      )
-      .filter(isDefined)
+    return data.map(articlePayloadToResource).filter(isDefined)
   }
 
   return useQuery<ReadonlyArray<ArticleResource>>(
@@ -88,7 +76,6 @@ export const useArticles = () => {
     fetchArticlesAsync,
     {
       refetchInterval: 15 * MILLISECONDS_PER_SECOND,
-      enabled: isDefined(trainingSession),
     }
   )
 }

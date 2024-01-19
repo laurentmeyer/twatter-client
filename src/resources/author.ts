@@ -5,8 +5,6 @@ import { getStrapiURL } from '../../lib/api'
 import type { ImagePayload } from './image'
 import type { MessagePayload, MessageResource } from './message'
 import { authorPayloadToResource } from '../helpers/payloadToResource'
-import { useTrainingSession } from './trainingSession'
-import { isDefined } from '../../lib/utils'
 
 /*
  * Types.
@@ -47,20 +45,16 @@ export interface AuthorResource {
 export const useAuthor = (id: number) => {
   // Should be a valid session, already checked by layout
   const { data: session } = useSession()
-  const trainingSession = useTrainingSession()
 
   const fetchAuthorAsync = async () => {
     const { data } = await axios.get(getStrapiURL(`/api/authors/${id}`), {
       headers: { Authorization: `Bearer ${session?.jwt}` },
     })
 
-    if (!isDefined(trainingSession))
-      throw new Error('Cannot fetch author without minutesLate')
-
-    return authorPayloadToResource(data, trainingSession.minutesLate)
+    return authorPayloadToResource(data)
   }
 
   return useQuery(['authors', id], fetchAuthorAsync, {
-    enabled: Number.isFinite(id) && isDefined(trainingSession),
+    enabled: Number.isFinite(id),
   })
 }

@@ -1,17 +1,13 @@
 import axios from 'axios'
-import { DateTime, Duration } from 'luxon'
 import { useSession } from 'next-auth/react'
 import styled from 'styled-components'
 import { getStrapiURL } from '../../lib/api'
-import {
-  MILLISECONDS_PER_MINUTE,
-  useTrainingSession,
-} from '../resources/trainingSession'
 import { useCurrentUser } from '../resources/user'
 import Image from 'next/image'
 import { useState } from 'react'
 import { Button } from './button'
 import SvgIcon from './svgIcon'
+import { useQueryClient } from 'react-query'
 
 /*
  * Types.
@@ -103,19 +99,12 @@ export const MessageForm = ({
 
   const { data: sessionData } = useSession()
   const { data: user } = useCurrentUser(sessionData?.jwt)
-  const trainingSession = useTrainingSession()
+  const queryClient = useQueryClient()
 
   const addTweet = async () => {
     setIsSendDisabled(true)
     const data = {
       author: user?.author.id,
-      time: DateTime.now()
-        .minus(
-          Duration.fromMillis(
-            MILLISECONDS_PER_MINUTE * (trainingSession?.minutesLate ?? 0)
-          )
-        )
-        .toLocaleString(DateTime.TIME_24_WITH_SECONDS),
       text,
       replyTo,
     }
@@ -131,6 +120,10 @@ export const MessageForm = ({
     await axios.post(getStrapiURL(`/api/messages/`), formData, {
       headers: { Authorization: `Bearer ${sessionData?.jwt}` },
     })
+
+    // todo: chose between two versions depending on reactivity
+    queryClient.invalidateQueries(['messages', 'list'])
+    // setTimeout(() => queryClient.invalidateQueries(['messages', 'list']), 1000)
 
     setIsSendDisabled(false)
     setText('')

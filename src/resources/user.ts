@@ -26,10 +26,7 @@ export interface UserResource {
  * Helpers.
  */
 
-export const userPayloadToResource = (
-  data: UserPayload,
-  minutesLate: number
-): UserResource => {
+export const userPayloadToResource = (data: UserPayload): UserResource => {
   const { author, email, username, id } = data
 
   if (!author) throw new Error(`User ${data.id} has no author`)
@@ -38,7 +35,7 @@ export const userPayloadToResource = (
     id,
     username,
     email,
-    author: authorPayloadToResource(author, minutesLate),
+    author: authorPayloadToResource(author),
   }
 }
 
@@ -46,14 +43,13 @@ const fetchCurrentUserAsync = async (jwt: string | undefined) => {
   if (!jwt) return undefined
 
   const { data } = await axios.get(
-    getStrapiURL(`/api/users/me?populate[author][populate]=%2A`),
+    getStrapiURL(`/api/users/me?populate[0]=author`),
     {
       headers: { Authorization: `Bearer ${jwt}` },
     }
   )
 
-  // No need for minutes late here, since don't care about messages for current user.
-  return userPayloadToResource(data, 0)
+  return userPayloadToResource(data)
 }
 
 /*

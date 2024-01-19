@@ -103,7 +103,6 @@ const likePath = [
 
 interface Props {
   message: MessageResource
-  // TODO add minutesLate here
 }
 
 /*

@@ -1,0 +1,34 @@
+* do login page with fetched logo
+* add a preview for image upload
+
+* create 404 redirections
+* make resilient to Pusher connection issues (locally for instance)
+* have better react query errors: https://tkdodo.eu/blog/react-query-error-handling
+* implement a dropzone for files: https://react-dropzone.js.org/
+
+WON'T DO
+
+* implement infinite query https://daily-dev-tips.com/posts/infinite-loading-with-react-query/
+* protect API with tokens (currently only frontend is protected)
+* stop requesting endlessly when not logged in
+* ideally use io-ts to secure incomig data
+
+LEARN
+
+* flex-flow
+* forwardRef
+
+USEFUL
+
+How to handle Link's FC children 
+https://nextjs.org/docs/api-reference/next/link#if-the-child-is-a-functional-component
+https://stackoverflow.com/a/66876771 HTMLAnchorElement
+
+
+SELECT SETVAL((SELECT PG_GET_SERIAL_SEQUENCE('"messages"', 'id')), (SELECT MAX(id) FROM messages) + 1, FALSE);
+\q
+
+
+ARG NEXT_PUBLIC_PUSHER_CLIENTKEY
+ARG NEXT_PUBLIC_PUSHER_CLUSTER
+ARG NEXT_PUBLIC_STRAPI_API_URL

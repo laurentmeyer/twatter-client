@@ -1,11 +1,10 @@
-import { DateTime, Duration } from 'luxon'
+import { DateTime } from 'luxon'
 import { isDefined } from '../../lib/utils'
 import { ArticlePayload, ArticleResource } from '../resources/article'
 import type { AuthorPayload, AuthorResource } from '../resources/author'
 import type { ImagePayload, ImageResource } from '../resources/image'
 import { MessagePayload, MessageResource } from '../resources/message'
 import { SourcePayload, SourceResource } from '../resources/source'
-import { MILLISECONDS_PER_MINUTE } from '../resources/trainingSession'
 
 // This file avoids circular dependencies.
 
@@ -23,9 +22,7 @@ export const imagePayloadToResource = (data: ImagePayload): ImageResource => ({
  */
 
 export const authorPayloadToResource = (
-  data: AuthorPayload,
-  // TODO get rid of minutes late here
-  minutesLate: number
+  data: AuthorPayload
 ): AuthorResource => {
   const {
     handle,
@@ -53,9 +50,7 @@ export const authorPayloadToResource = (
     imageAlt: sanitize(image && image.alternativeText),
     backgroundUrl: sanitize(backgroundImage?.url),
     backgroundAlt: sanitize(backgroundImage?.alternativeText),
-    messages: messages
-      .map((message) => messagePayloadToResource(message, minutesLate))
-      .filter(isDefined),
+    messages: messages.map(messagePayloadToResource).filter(isDefined),
   }
 }
 
@@ -64,36 +59,28 @@ export const authorPayloadToResource = (
  */
 
 export const messagePayloadToResource = (
-  data: MessagePayload,
-  minutesLate: number
-): MessageResource | undefined => {
+  data: MessagePayload
+): MessageResource => {
   const {
     id,
     author,
     text,
+    time,
     image,
     likesCount = 0,
     replies = [],
     replyTo,
   } = data
 
-  const time = DateTime.fromISO(data.time).plus(
-    Duration.fromMillis(MILLISECONDS_PER_MINUTE * minutesLate)
-  )
-
-  if (isAfterNow(time)) return undefined
-
   return {
     id,
     text,
-    time,
+    time: DateTime.fromISO(time),
     likesCount,
     image: image && imagePayloadToResource(image),
-    author: author ? authorPayloadToResource(author, minutesLate) : undefined,
+    author: author && authorPayloadToResource(author),
     isReply: Boolean(replyTo),
-    replies: replies
-      .map((r) => messagePayloadToResource(r, minutesLate))
-      .filter(isDefined),
+    replies: replies.map(messagePayloadToResource).filter(isDefined),
   }
 }
 
@@ -119,21 +106,14 @@ export const sourcePayloadToResource = (
  */
 
 export const articlePayloadToResource = (
-  data: ArticlePayload,
-  minutesLate: number
-): ArticleResource | undefined => {
-  const { id, source, title, content, thumbnail } = data
-
-  const time = DateTime.fromISO(data.time).plus(
-    Duration.fromMillis(MILLISECONDS_PER_MINUTE * minutesLate)
-  )
-
-  if (isAfterNow(time)) return undefined
+  data: ArticlePayload
+): ArticleResource => {
+  const { id, source, title, time, content, thumbnail } = data
 
   return {
     id,
     content,
-    time,
+    time: DateTime.fromISO(time),
     source: source ? sourcePayloadToResource(source) : undefined,
     thumbnail: thumbnail ? imagePayloadToResource(thumbnail) : undefined,
     title,
@@ -146,12 +126,4 @@ export const articlePayloadToResource = (
 
 function sanitize(s: string | undefined | null) {
   return s === 'null' || !s ? '' : s
-}
-
-function isAfterNow(time: DateTime) {
-  const minutes = 60 * time.hour + time.minute
-  const now = DateTime.now()
-  const minutesNow = 60 * now.hour + now.minute
-
-  return minutes >= minutesNow
 }
