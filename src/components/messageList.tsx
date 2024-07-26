@@ -6,12 +6,9 @@ import { Message } from './message'
 /*
  * Styles.
  */
-interface SpanProps {
-  cursor?: boolean
-}
 
-const StyledSpan = styled.div<SpanProps>`
-  cursor: ${(p) => (p.cursor ? 'pointer' : 'auto')};
+const StyledSpan = styled.div<{ pointer?: boolean }>`
+  cursor: ${(p) => (p.pointer ? 'pointer' : 'auto')};
 
   border-bottom: 1px solid rgb(230, 236, 240);
 
@@ -38,14 +35,14 @@ export const MessageList = ({ messages }: Props) => {
       {messages.map((message) => {
         if (message.isReply || !message.author)
           return (
-            <StyledSpan>
-              <Message key={message.id} message={message} />
+            <StyledSpan key={message.id}>
+              <Message message={message} />
             </StyledSpan>
           )
 
         return (
           <Link key={message.id} href={`/messages/${message.id}`} passHref>
-            <StyledSpan cursor>
+            <StyledSpan pointer>
               <Message message={message} />
             </StyledSpan>
           </Link>

@@ -1,87 +1,22 @@
-import { ReactNode } from 'react'
-import { signOut, useSession } from 'next-auth/react'
-import { useCurrentUser } from '../resources/user'
-import Link from 'next/link'
-import Image from 'next/image'
 import styled from 'styled-components'
+import { ReactNode } from 'react'
 import SvgIcon from './svgIcon'
 import React from 'react'
-import { Button } from './button'
+import { signOut, useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
+import Button from 'react-bootstrap/Button'
+import Navbar from 'react-bootstrap/Navbar'
+import Col from 'react-bootstrap/Col'
+import Nav from 'react-bootstrap/Nav'
+import Container from 'react-bootstrap/Container'
+import Image from 'react-bootstrap/Image'
+import Row from 'react-bootstrap/Row'
+import { useCurrentUser } from '../resources/user'
 import { useTrainingSession } from '../resources/trainingSession'
 
 /*
  * Styles.
  */
-
-const StyledWrapper = styled.div`
-  display: flex;
-  flex-flow: row wrap;
-`
-
-const StyledRightColumn = styled.div`
-  flex-basis: 30%;
-  max-width: 30%;
-`
-
-const StyledHeader = styled.header`
-  padding-left: 10px;
-  padding-right: 10px;
-  width: 70%;
-  height: 100vh;
-  margin-left: auto;
-  margin-right: auto;
-  position: sticky;
-  top: 0;
-  .active {
-    fill: rgba(29, 161, 242, 1);
-    color: rgba(29, 161, 242, 1);
-    border-radius: 50px;
-  }
-  @media (max-width: 992px) {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-  }
-  @media (max-width: 768px) {
-    align-items: center;
-  }
-`
-
-const StyledRightButtonsContainer = styled.div`
-  height: 80vh;
-`
-
-const StyledClientLogoContainer = styled.div`
-  position: relative;
-  height: 20vh;
-`
-
-const StyledCenterColumn = styled.div<{ isTwatter?: boolean }>`
-  flex-basis: ${(p) => (p.isTwatter ? '37.5%' : '45%')};
-  max-width: ${(p) => (p.isTwatter ? '37.5%' : '45%')};
-  border-left: 1px solid rgb(230, 236, 240);
-  border-right: 1px solid rgb(230, 236, 240);
-`
-
-const MenuItem = styled.div`
-  margin-top: 10px;
-  color: rgba(0, 0, 0, 1);
-  div {
-    display: inline-block;
-    padding: 10px;
-  }
-
-  &:hover div {
-    color: rgba(29, 161, 242, 1);
-    fill: rgba(29, 161, 242, 1);
-    background: rgba(29, 161, 242, 0.1);
-    border-radius: 50px;
-  }
-  @media (max-width: 768px) {
-    margin-top: 0;
-  }
-`
 
 const MenuTitle = styled.span`
   margin-left: 20px;
@@ -94,8 +29,11 @@ const MenuTitle = styled.span`
   }
 `
 
-const StyledButton = styled(Button)`
-  margin-top: 10px;
+const StyledNavButton = styled(Button)`
+  display: grid;
+  width: 100%;
+  grid-template-columns: 50px 1fr;
+  padding: 10px 50px 10px 30px;
 `
 
 /*
@@ -118,18 +56,10 @@ const paths = {
 }
 
 /*
- * Props.
- */
-
-interface LayoutProps {
-  children: ReactNode
-}
-
-/*
  * Component.
  */
 
-export default function Layout({ children }: LayoutProps) {
+export default function Layout({ children }: { children: ReactNode }) {
   const { status: sessionStatus, data: sessionData } = useSession()
   const { data: userData } = useCurrentUser(sessionData?.jwt)
   const router = useRouter()
@@ -142,141 +72,114 @@ export default function Layout({ children }: LayoutProps) {
     return <>{'Error: unable to authenticate current user.'}</>
 
   return (
-    <StyledWrapper>
-      <StyledRightColumn>
-        <StyledHeader>
-          <StyledRightButtonsContainer>
-            <StyledClientLogoContainer>
-              <Image
-                src={trainingSession?.clientLogo.url || '/empty.jpeg'}
-                alt={trainingSession?.clientLogo.alternativeText || ''}
-                objectFit="contain"
-                objectPosition="unset"
-                fill
-              />
-            </StyledClientLogoContainer>
-            <Link href="/" passHref>
-              <HomeButton />
-            </Link>
-            <Link href={`/news`} passHref>
-              <GoggleButton />
-            </Link>
-            <Link href={`/authors/${userData?.author.id}`} passHref>
-              <ProfileButton />
-            </Link>
-            <StyledButton
-              onClick={() => signOut()}
-              width="100%"
-              padding="12px 30px"
-            >
-              Sign out
-            </StyledButton>
-          </StyledRightButtonsContainer>
-        </StyledHeader>
-      </StyledRightColumn>
-      <StyledCenterColumn isTwatter={!isGoogle}>
-        <main>{children}</main>
-      </StyledCenterColumn>
-    </StyledWrapper>
+    <>
+      <Navbar expand className="bg-body-tertiary d-lg-none">
+        <Container fluid>
+          <Navbar.Brand onClick={() => router.push('/')}>
+            {/* <Image
+              fluid
+              src={trainingSession?.clientLogo.url || '/empty.jpeg'}
+              alt={trainingSession?.clientLogo.alternativeText || ''}
+              // width={30}
+              // height={30}
+            />{' '} */}
+            Arjuna-medialab
+          </Navbar.Brand>
+          <Navbar.Toggle aria-controls="basic-navbar-nav" />
+          <Navbar.Collapse id="basic-navbar-nav">
+            <Nav className="w-100 justify-content-between">
+              <Button variant="light" onClick={() => router.push('/')}>
+                <SvgIcon
+                  paths={paths.twitterLogo}
+                  width="24px"
+                  height="24px"
+                  fill="rgb(0, 0, 0)"
+                  viewBox="0 0 300 300"
+                />
+              </Button>
+              <Button variant="light" onClick={() => router.push('/news')}>
+                <SvgIcon
+                  paths={paths.googleLogo}
+                  viewBox="0 0 210 210"
+                  width="26.25px"
+                  height="26.25px"
+                  fill="rgb(0, 0, 0)"
+                />
+              </Button>
+              <Button
+                variant="light"
+                onClick={() => router.push(`/authors/${userData?.author.id}`)}
+              >
+                <SvgIcon
+                  paths={paths.profile}
+                  width="26.25px"
+                  height="26.25px"
+                  fill="rgb(0, 0, 0)"
+                />
+              </Button>
+              <Button variant="primary" onClick={() => signOut()}>
+                Sign out
+              </Button>
+            </Nav>
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
+      <Container fluid>
+        <Row>
+          <Col className="text-white d-none d-lg-block" lg={3}>
+            <Nav defaultActiveKey="/home" className="flex-column">
+              <Nav.Item>
+                <Image
+                  fluid
+                  src={trainingSession?.clientLogo.url || '/empty.jpeg'}
+                  alt={trainingSession?.clientLogo.alternativeText || ''}
+                />
+              </Nav.Item>
+              <StyledNavButton variant="light" onClick={() => router.push('/')}>
+                <SvgIcon
+                  paths={paths.twitterLogo}
+                  width="24px"
+                  height="24px"
+                  fill="rgb(0, 0, 0)"
+                  viewBox="0 0 300 300"
+                />
+                <MenuTitle>{'Tweets'}</MenuTitle>
+              </StyledNavButton>
+              <StyledNavButton
+                variant="light"
+                onClick={() => router.push('/news')}
+              >
+                <SvgIcon
+                  paths={paths.googleLogo}
+                  viewBox="0 0 210 210"
+                  width="26.25px"
+                  height="26.25px"
+                  fill="rgb(0, 0, 0)"
+                />
+                <MenuTitle>{'News'}</MenuTitle>
+              </StyledNavButton>
+              <StyledNavButton
+                variant="light"
+                onClick={() => router.push(`/authors/${userData?.author.id}`)}
+              >
+                <SvgIcon
+                  paths={paths.profile}
+                  width="26.25px"
+                  height="26.25px"
+                  fill="rgb(0, 0, 0)"
+                />
+                <MenuTitle>{'Profile'}</MenuTitle>
+              </StyledNavButton>
+              <Button variant="primary" onClick={() => signOut()}>
+                Sign out
+              </Button>
+            </Nav>
+          </Col>
+          <Col lg={isGoogle ? 7 : 6}>
+            <main>{children}</main>
+          </Col>
+        </Row>
+      </Container>
+    </>
   )
 }
-
-const HomeButton = React.forwardRef<
-  HTMLAnchorElement,
-  React.HTMLProps<HTMLAnchorElement>
->(({ onClick, href }, ref) => {
-  const router = useRouter()
-
-  return (
-    <a href={href} onClick={onClick} ref={ref}>
-      <MenuItem className={router.asPath === href ? 'active' : ''}>
-        <div>
-          <SvgIcon
-            paths={paths.twitterLogo}
-            width="24px"
-            height="24px"
-            fill="rgb(0, 0, 0)"
-            viewBox="0 0 300 300"
-          />
-          <MenuTitle>{'Tweets'}</MenuTitle>
-        </div>
-      </MenuItem>
-    </a>
-  )
-})
-
-HomeButton.displayName = 'Home Button'
-
-const TwatterButton = React.forwardRef<
-  HTMLAnchorElement,
-  React.HTMLProps<HTMLAnchorElement>
->(({ onClick, href }, ref) => {
-  const router = useRouter()
-
-  return (
-    <a href={href} onClick={onClick} ref={ref}>
-      <MenuItem className={router.asPath === href ? 'active' : ''}>
-        <div>
-          <SvgIcon
-            paths={paths.home}
-            width="26.25px"
-            height="26.25px"
-            fill="rgb(0, 0, 0)"
-          />
-          <MenuTitle>{'Twatter'}</MenuTitle>
-        </div>
-      </MenuItem>
-    </a>
-  )
-})
-
-TwatterButton.displayName = 'Twatter Button'
-
-const ProfileButton = React.forwardRef<
-  HTMLAnchorElement,
-  React.HTMLProps<HTMLAnchorElement>
->(({ onClick, href }, ref) => {
-  const router = useRouter()
-
-  return (
-    <a href={href} onClick={onClick} ref={ref}>
-      <MenuItem className={router.asPath === href ? 'active' : ''}>
-        <div>
-          <SvgIcon
-            paths={paths.profile}
-            width="26.25px"
-            height="26.25px"
-            fill="rgb(0, 0, 0)"
-          />
-          <MenuTitle>{'Profile'}</MenuTitle>
-        </div>
-      </MenuItem>
-    </a>
-  )
-})
-
-ProfileButton.displayName = 'Profile Button'
-
-const GoggleButton = React.forwardRef<
-  HTMLAnchorElement,
-  React.HTMLProps<HTMLAnchorElement>
->(({ onClick, href }, ref) => {
-  return (
-    <a href={href} onClick={onClick} ref={ref}>
-      <MenuItem>
-        <div>
-          <SvgIcon
-            paths={paths.googleLogo}
-            viewBox="0 0 210 210"
-            width="26.25px"
-            height="26.25px"
-            fill="rgb(0, 0, 0)"
-          />
-          <MenuTitle>{'News'}</MenuTitle>
-        </div>
-      </MenuItem>
-    </a>
-  )
-})
-
-GoggleButton.displayName = 'Google Button'

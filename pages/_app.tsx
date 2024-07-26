@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from 'react-query'
 import { SessionProvider } from 'next-auth/react'
 import Layout from '../src/components/layout'
 import { PusherProvider } from '@harelpls/use-pusher'
+import 'bootstrap/dist/css/bootstrap.css'
 
 const queryClient = new QueryClient()
 const pusherConfig = {
