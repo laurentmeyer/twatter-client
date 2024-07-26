@@ -14,3 +14,27 @@ a {
 * {
   box-sizing: border-box;
 }
+
+.custom-hover-background {
+  &:hover {
+    background-color: rgb(245, 248, 250);
+  }
+}
+
+.custom-message-image {
+  max-height: 25vh;
+
+  /* Based on: https://stackoverflow.com/a/6528918 */
+  position: static;
+}
+
+.custom-message-image-container {
+  /* Based on: https://stackoverflow.com/a/6528918 */
+  position: static;
+  overflow: hidden;
+}
+
+.custom-link-over-stretched-link {
+  position: relative;
+  z-index: 2;
+}
