@@ -1,23 +1,18 @@
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import styled from 'styled-components'
-import { Button } from '../../src/components/button'
+// import { Button } from '../../src/components/button'
 import { Message } from '../../src/components/message'
 import { MessageForm } from '../../src/components/messageForm'
 import { MessageList } from '../../src/components/messageList'
-import { Modal } from '../../src/components/modal'
+import Button from 'react-bootstrap/Button'
+import Modal from 'react-bootstrap/Modal'
 import { useMessage } from '../../src/resources/message'
 import { StyledBottomMarginWrapper } from '../../styles/common'
 
 /*
  * Styles.
  */
-
-const StyledButtonsWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-`
 
 const StyledMessageWrapper = styled.div`
   padding: 15px;
@@ -30,6 +25,7 @@ const StyledMessageWrapper = styled.div`
 const MessagePage = () => {
   const router = useRouter()
   const [commentModalIsOpen, setCommentModalIsOpen] = useState(false)
+  const handleClose = () => setCommentModalIsOpen(false)
   const id = Number(router.query.id)
 
   const { data: message, status } = useMessage(id)
@@ -40,26 +36,26 @@ const MessagePage = () => {
         return (
           <>
             {commentModalIsOpen && (
-              <Modal handleClose={() => setCommentModalIsOpen(false)}>
-                <MessageForm
-                  placeHolder="Reply to this tweet"
-                  onTweet={() => setCommentModalIsOpen(false)}
-                  replyTo={message.id}
-                />
+              <Modal show={commentModalIsOpen} onHide={handleClose}>
+                <Modal.Header closeButton>
+                  <Modal.Title>Modal heading</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  {' '}
+                  <MessageForm
+                    placeHolder="Reply to this tweet"
+                    onTweet={() => setCommentModalIsOpen(false)}
+                    replyTo={message.id}
+                  />
+                </Modal.Body>
               </Modal>
             )}
             <StyledBottomMarginWrapper>
               <StyledMessageWrapper>
                 <Message message={message} />
-                <StyledButtonsWrapper>
-                  <Button
-                    onClick={() => setCommentModalIsOpen(true)}
-                    width=""
-                    padding="12px 30px"
-                  >
-                    Reply
-                  </Button>
-                </StyledButtonsWrapper>
+                <Button onClick={() => setCommentModalIsOpen(true)}>
+                  Reply
+                </Button>
               </StyledMessageWrapper>
             </StyledBottomMarginWrapper>
             {message.replies.length > 0 && (

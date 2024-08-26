@@ -81,7 +81,7 @@ export const Message = ({ message }: Props) => {
   )
 
   return (
-    <Container className="position-relative border-bottom py-2 custom-hover-background">
+    <Container className="position-relative py-2 custom-hover-background">
       <Row>
         <Col xs={2}>
           <Image

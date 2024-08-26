@@ -1,3 +1,5 @@
+* faire apparaitre la section dans laquelle on est (via le bouton de navigation)
+
 * do login page with fetched logo
 * add a preview for image upload
 

@@ -17,7 +17,9 @@ export const MessageList = ({ messages }: Props) => {
   return (
     <>
       {messages.map((message) => (
-        <Message key={message.id} message={message} />
+        <div className=" border-bottom" key={message.id}>
+          <Message message={message} />
+        </div>
       ))}
     </>
   )
