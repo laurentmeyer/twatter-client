@@ -2,7 +2,7 @@ import Image from 'next/image'
 import styled from 'styled-components'
 import { StyledBottomMarginWrapper } from '../../styles/common'
 import { AuthorResource } from '../resources/author'
-import { MessageList } from './messageList'
+import { Message } from './message'
 
 /*
  * Types.
@@ -141,7 +141,11 @@ export const Author = ({ author }: Props) => {
           </StyledFollowersWrapper>
         </StyledAuthorInfoWrapper>
       </StyledBottomMarginWrapper>
-      <MessageList messages={messages} />
+      {messages.map((message) => (
+        <div className=" border-bottom" key={message.id}>
+          <Message message={message} />
+        </div>
+      ))}
     </>
   )
 }

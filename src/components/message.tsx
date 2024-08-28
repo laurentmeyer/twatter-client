@@ -103,7 +103,6 @@ export const Message = ({ message }: Props) => {
           {actionsRow}
         </Col>
       </Row>
-
       {messageLink}
     </Container>
   )

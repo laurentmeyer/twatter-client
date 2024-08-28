@@ -1,11 +1,11 @@
 import { useQueryClient } from 'react-query'
 import { MessageForm } from '../src/components/messageForm'
-import { MessageList } from '../src/components/messageList'
 import { useMessages } from '../src/resources/message'
 import { useChannel, useEvent } from '@harelpls/use-pusher'
 import styled from 'styled-components'
 import { StyledBottomMarginWrapper } from '../styles/common'
 import { NextPage } from 'next'
+import { Message } from '../src/components/message'
 
 const StyledWrapper = styled.div`
   padding: 15px;
@@ -41,7 +41,11 @@ export const TwatterHome: NextPage = () => {
               <MessageForm placeHolder="What's happening?" />
             </StyledWrapper>
           </StyledBottomMarginWrapper>
-          <MessageList messages={nonReplyMessages} />
+          {nonReplyMessages.map((message) => (
+            <div className=" border-bottom" key={message.id}>
+              <Message message={message} />
+            </div>
+          ))}
         </>
       )
     }

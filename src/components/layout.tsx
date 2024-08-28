@@ -21,7 +21,7 @@ export default function Layout({ children }: { children: ReactNode }) {
   const { status: sessionStatus, data: sessionData } = useSession()
   const { data: userData } = useCurrentUser(sessionData?.jwt)
   const router = useRouter()
-  const isGoogle = router.pathname.startsWith('/news')
+  // const isGoogle = router.pathname.startsWith('/news')
   const trainingSession = useTrainingSession()
 
   if (sessionStatus === 'loading') return <>{'Loading ...'}</>
@@ -61,29 +61,6 @@ export default function Layout({ children }: { children: ReactNode }) {
 
   return (
     <>
-      <Navbar expand className="bg-body-tertiary d-lg-none">
-        <Container fluid>
-          <Navbar.Brand onClick={() => router.push('/')}>
-            {/* <Image
-              fluid
-              src={trainingSession?.clientLogo.url || '/empty.jpeg'}
-              alt={trainingSession?.clientLogo.alternativeText || ''}
-              // width={30}
-              // height={30}
-            />{' '} */}
-            Arjuna-medialab
-          </Navbar.Brand>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="w-100 justify-content-between d-flex align-items-center">
-              {twitterButton}
-              {googleButton}
-              {profileButton}
-              {signOutButton}
-            </Nav>
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
       <Container fluid>
         <Row>
           <Col className="d-none d-lg-block" lg={3}>
@@ -101,7 +78,20 @@ export default function Layout({ children }: { children: ReactNode }) {
               {signOutButton}
             </Nav>
           </Col>
-          <Col lg={isGoogle ? 7 : 6}>
+          <Col lg={7}>
+            <Navbar className="bg-body-tertiary d-lg-none">
+              <Container>
+                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                <Navbar.Collapse id="basic-navbar-nav">
+                  <Nav className="w-100 justify-content-between d-flex align-items-center">
+                    {twitterButton}
+                    {googleButton}
+                    {profileButton}
+                    {signOutButton}
+                  </Nav>
+                </Navbar.Collapse>
+              </Container>
+            </Navbar>
             <main>{children}</main>
           </Col>
         </Row>

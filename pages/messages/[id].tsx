@@ -4,7 +4,6 @@ import styled from 'styled-components'
 // import { Button } from '../../src/components/button'
 import { Message } from '../../src/components/message'
 import { MessageForm } from '../../src/components/messageForm'
-import { MessageList } from '../../src/components/messageList'
 import Button from 'react-bootstrap/Button'
 import Modal from 'react-bootstrap/Modal'
 import { useMessage } from '../../src/resources/message'
@@ -58,9 +57,11 @@ const MessagePage = () => {
                 </Button>
               </StyledMessageWrapper>
             </StyledBottomMarginWrapper>
-            {message.replies.length > 0 && (
-              <MessageList messages={message.replies} />
-            )}
+            {message.replies.map((message) => (
+              <div className=" border-bottom" key={message.id}>
+                <Message message={message} />
+              </div>
+            ))}
           </>
         )
       else throw new Error('Cannot fetch message')
