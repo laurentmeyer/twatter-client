@@ -15,13 +15,14 @@ import { ChatFill, HeartFill } from 'react-bootstrap-icons'
 
 interface Props {
   message: MessageResource
+  children?: ReactNode
 }
 
 /*
  * Component.
  */
 
-export const Message = ({ message }: Props) => {
+export const Message = ({ message, children }: Props) => {
   const { text, author, image, isReply, id } = message
   const queryClient = useQueryClient()
   const channel = useChannel('messages')
@@ -102,6 +103,7 @@ export const Message = ({ message }: Props) => {
           {actionsRow}
         </Col>
       </Row>
+      {children}
       {messageLink}
     </div>
   )

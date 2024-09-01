@@ -1,13 +1,13 @@
 import axios from 'axios'
 import { useSession } from 'next-auth/react'
-import styled from 'styled-components'
 import { getStrapiURL } from '../../lib/api'
 import { useCurrentUser } from '../resources/user'
-import Image from 'next/image'
+import Image from 'react-bootstrap/Image'
 import { useState } from 'react'
 import { useQueryClient } from 'react-query'
 import Button from 'react-bootstrap/Button'
 import { CardImage } from 'react-bootstrap-icons'
+import { Col, Row } from 'react-bootstrap'
 
 /*
  * Types.
@@ -21,50 +21,6 @@ interface Preview {
 /*
  * Styles.
  */
-
-const StyledImageWrapper = styled.div`
-  position: relative;
-  height: 49px;
-  width: 49px;
-  margin-right: 8px;
-`
-
-const StyledFormWrapper = styled.div`
-  width: 100%;
-`
-
-const StyledButtonsWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-`
-
-const StyledTextArea = styled.textarea`
-  background: rgb(255, 255, 255) none repeat scroll 0% 0%;
-  caret-color: rgb(0, 0, 0);
-  width: 100%;
-  outline: currentcolor none medium;
-  border: medium none;
-  resize: none;
-  font-size: 16px;
-  font-weight: 500;
-  color: rgb(0, 0, 0);
-  overflow: auto;
-
-  margin: 0;
-  font-family: inherit;
-  line-height: inherit;
-`
-
-const StyledFileInput = styled.div`
-  cursor: pointer;
-  padding: 5px;
-  border-radius: 50%;
-  margin-right: 8px;
-  &:hover {
-    background-color: 'rgba(29, 161, 242, 0.1)';
-  }
-`
 
 /*
  * Props.
@@ -109,9 +65,13 @@ export const MessageForm = ({
 
     if (file) formData.append(`files.image`, file, file.name)
 
-    await axios.post(getStrapiURL(`/api/messages/`), formData, {
-      headers: { Authorization: `Bearer ${sessionData?.jwt}` },
-    })
+    try {
+      await axios.post(getStrapiURL(`/api/messages/`), formData, {
+        headers: { Authorization: `Bearer ${sessionData?.jwt}` },
+      })
+    } catch (error) {
+      console.error(error)
+    }
 
     // todo: chose between two versions depending on reactivity
     queryClient.invalidateQueries(['messages', 'list'])
@@ -139,45 +99,42 @@ export const MessageForm = ({
 
   return (
     <>
-      <div>
-        <StyledImageWrapper>
+      <Row>
+        <Col xs={2}>
           <Image
-            style={{ borderRadius: '50%', objectFit: 'cover' }}
+            fluid
+            roundedCircle
             src={user?.author.imageUrl || '/empty.jpeg'}
             alt={user?.author.imageAlt || user?.author.handle || 'alt'}
-            fill
           />
-        </StyledImageWrapper>
-      </div>
-      <StyledFormWrapper>
-        <StyledTextArea
-          rows={5}
-          placeholder={placeHolder}
-          value={text}
-          onChange={(e) => {
-            setText(e.target.value)
-            e.target.value ? setIsSendDisabled(false) : setIsSendDisabled(true)
-          }}
+        </Col>
+      </Row>
+      <textarea
+        className="custom-reply-text-area w-100 border border-0"
+        rows={5}
+        placeholder={placeHolder}
+        value={text}
+        onChange={(e) => {
+          setText(e.target.value)
+          e.target.value ? setIsSendDisabled(false) : setIsSendDisabled(true)
+        }}
+      />
+      <div className="d-flex gap-3 justify-content-end align-items-center">
+        <label htmlFor="photo">
+          <CardImage size={24} className="text-primary" />
+        </label>
+        <input
+          type="file"
+          id="photo"
+          name="photo"
+          accept="image/*"
+          onChange={handlePhoto}
+          style={{ display: 'none' }}
         />
-        <StyledButtonsWrapper>
-          <StyledFileInput>
-            <label htmlFor="photo">
-              <CardImage size={24} className="text-primary " />
-            </label>
-            <input
-              type="file"
-              id="photo"
-              name="photo"
-              accept="image/*"
-              onChange={handlePhoto}
-              style={{ display: 'none' }}
-            />
-          </StyledFileInput>
-          <Button onClick={addTweet} disabled={isSendDisabled}>
-            Tweet
-          </Button>
-        </StyledButtonsWrapper>
-      </StyledFormWrapper>
+        <Button onClick={addTweet} disabled={isSendDisabled}>
+          Tweet
+        </Button>
+      </div>
     </>
   )
 }

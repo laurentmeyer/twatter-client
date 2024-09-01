@@ -11,7 +11,6 @@
   },
   "dependencies": {
     "@types/bootstrap": "5.2.10",
-    "@types/styled-components": "5.1.26",
     "@types/luxon": "3.0.0",
     "@types/remove-markdown": "0.3.1",
     "@harelpls/use-pusher": "7.2.1",
@@ -28,8 +27,7 @@
     "react-markdown": "8.0.3",
     "react-query": "3.39.1",
     "remark-unwrap-images": "3.0.1",
-    "remove-markdown": "0.5.0",
-    "styled-components": "5.3.5"
+    "remove-markdown": "0.5.0"
   },
   "devDependencies": {
     "@types/node": "17.0.40",

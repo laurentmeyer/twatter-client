@@ -1,6 +1,4 @@
-import Image from 'next/image'
-import styled from 'styled-components'
-import { StyledBottomMarginWrapper } from '../../styles/common'
+import Image from 'react-bootstrap/Image'
 import { AuthorResource } from '../resources/author'
 import { Message } from './message'
 
@@ -11,76 +9,6 @@ import { Message } from './message'
 interface Props {
   author: AuthorResource
 }
-
-/*
- * Styles.
- */
-
-const StyledAuthorInfoWrapper = styled.div`
-  padding-left: 15px;
-  padding-right: 15px;
-`
-
-const StyledBackgroudWrapper = styled.div`
-  position: relative;
-  height: 150px;
-`
-
-const StyledNameWrapper = styled.div`
-  margin-top: 10px;
-  font-family: 'TwitterChirp', Arial, sans-serif;
-  font-size: 20px;
-  line-height: 24px;
-  font-weight: 800;
-`
-
-const StyledHandleWrapper = styled.div`
-  color: rgb(83, 100, 113);
-  font-size: 15px;
-  line-height: 20px;
-  font-weight: 400;
-`
-
-const StyledDescriptionWrapper = styled.div`
-  margin-top: 12px;
-
-  color: rgb(15, 20, 25);
-  font-size: 15px;
-  line-height: 20px;
-  font-weight: 400;
-`
-
-const StyledFollowersWrapper = styled.div`
-  margin-top: 12px;
-  margin-bottom: 12px;
-
-  color: rgb(83, 100, 113);
-  font-size: 14px;
-  line-height: 16px;
-  font-weight: 400;
-`
-
-const StyledFollowersCountSpan = styled.span`
-  color: rgb(15, 20, 25);
-  font-size: 14px;
-  line-height: 16px;
-  font-weight: 700;
-`
-
-const ImgFlex = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-left: 15px;
-  padding-right: 15px;
-`
-
-const Avatar = styled.div`
-  position: relative;
-  width: 117px;
-  height: 117px;
-  margin-top: -13%;
-`
 
 /*
  * Component.
@@ -106,46 +34,45 @@ export const Author = ({ author }: Props) => {
 
   return (
     <>
-      <StyledBottomMarginWrapper>
-        <StyledBackgroudWrapper>
+      <div className="border-bottom">
+        <Image
+          className="w-100"
+          style={{ height: 200 }}
+          src={backgroundUrl || '/background.jpg'}
+          alt={'background'}
+          fluid
+        />
+        <div>
           <Image
-            src={backgroundUrl || '/background.jpg'}
-            alt={'background'}
-            fill
+            style={{
+              height: 120,
+              border: '4px solid white',
+              borderRadius: '50%',
+              backgroundColor: 'grey',
+              margin: '-60px 0 0 12px',
+            }}
+            src={imageUrl || '/empty.jpeg'}
+            alt={imageAlt || handle}
+            fluid
           />
-        </StyledBackgroudWrapper>
-        <ImgFlex>
-          <Avatar>
-            <Image
-              style={{
-                border: '4px solid white',
-                borderRadius: '50%',
-                objectFit: 'cover',
-                backgroundColor: 'grey',
-              }}
-              src={imageUrl || '/empty.jpeg'}
-              alt={imageAlt || handle}
-              fill
-            />
-          </Avatar>
-        </ImgFlex>
-        <StyledAuthorInfoWrapper>
-          <StyledNameWrapper>{displayName}</StyledNameWrapper>
-          <StyledHandleWrapper>{`@${handle}`}</StyledHandleWrapper>
-          <StyledDescriptionWrapper>{description}</StyledDescriptionWrapper>
-          <StyledFollowersWrapper>
-            <StyledFollowersCountSpan>
-              {followersCount.toString()}
-            </StyledFollowersCountSpan>
-            {' Followers'}
-          </StyledFollowersWrapper>
-        </StyledAuthorInfoWrapper>
-      </StyledBottomMarginWrapper>
-      {messages.map((message) => (
-        <div className=" border-bottom" key={message.id}>
-          <Message message={message} />
         </div>
-      ))}
+        <div className="px-3">
+          <h3>{displayName}</h3>
+          <div className="text-secondary">{`@${handle}`}</div>
+          <div className="">{description}</div>
+          <div>
+            <span className="fw-bold">{followersCount.toString()}</span>
+            {' Followers'}
+          </div>
+        </div>
+      </div>
+      <div>
+        {messages.map((message) => (
+          <div className=" border-bottom" key={message.id}>
+            <Message message={message} />
+          </div>
+        ))}
+      </div>
     </>
   )
 }

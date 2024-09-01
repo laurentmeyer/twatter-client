@@ -49,3 +49,10 @@ a {
   -webkit-box-orient: vertical;
   white-space: normal;
 }
+
+.custom-reply-text-area {
+  outline: currentcolor none medium;
+  border: medium none;
+  resize: none;
+  overflow: auto;
+}
