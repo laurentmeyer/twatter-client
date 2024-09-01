@@ -2,7 +2,6 @@ import { MessageResource } from '../resources/message'
 import Image from 'react-bootstrap/Image'
 import { DateTime } from 'luxon'
 import Link from 'next/link'
-import Container from 'react-bootstrap/Container'
 import { ReactNode } from 'react'
 import { useChannel, useEvent } from '@harelpls/use-pusher'
 import { useQueryClient } from 'react-query'
@@ -68,20 +67,20 @@ export const Message = ({ message }: Props) => {
   )
 
   const actionsRow = (
-    <Row className="text-center text-secondary">
-      <Col className="d-flex justify-content-center">
-        <ChatFill className="align-self-center me-1" />
+    <div className="d-flex justify-content-evenly text-secondary">
+      <span>
+        <ChatFill className="me-1" />
         {message.replies.length}
-      </Col>
-      <Col className="d-flex justify-content-md-center">
-        <HeartFill className="align-self-center me-1" />
+      </span>
+      <span>
+        <HeartFill className="me-1" />
         {message.likesCount}
-      </Col>
-    </Row>
+      </span>
+    </div>
   )
 
   return (
-    <Container className="position-relative py-2 custom-hover-background">
+    <div className="position-relative py-2 custom-hover-background">
       <Row>
         <Col xs={2}>
           <Image
@@ -104,7 +103,7 @@ export const Message = ({ message }: Props) => {
         </Col>
       </Row>
       {messageLink}
-    </Container>
+    </div>
   )
 }
 

@@ -26,7 +26,7 @@ export const NavBarButton = ({ iconName, label, onClick }: Props) => {
         <Col className="col-md-auto">
           <Icon size={24} />
         </Col>
-        <Col className="d-none d-lg-block" lg={3}>
+        <Col className="d-none d-md-block" md={4} lg={3}>
           {label}
         </Col>
       </Row>
