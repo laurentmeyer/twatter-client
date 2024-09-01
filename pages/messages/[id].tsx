@@ -1,27 +1,11 @@
 import { useRouter } from 'next/router'
 import { useState } from 'react'
-import styled from 'styled-components'
-import { Button } from '../../src/components/button'
 import { Message } from '../../src/components/message'
 import { MessageForm } from '../../src/components/messageForm'
-import { MessageList } from '../../src/components/messageList'
-import { Modal } from '../../src/components/modal'
+import Button from 'react-bootstrap/Button'
+import Modal from 'react-bootstrap/Modal'
 import { useMessage } from '../../src/resources/message'
-import { StyledBottomMarginWrapper } from '../../styles/common'
-
-/*
- * Styles.
- */
-
-const StyledButtonsWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-`
-
-const StyledMessageWrapper = styled.div`
-  padding: 15px;
-`
+import { Col, Row } from 'react-bootstrap'
 
 /*
  * Component.
@@ -30,6 +14,7 @@ const StyledMessageWrapper = styled.div`
 const MessagePage = () => {
   const router = useRouter()
   const [commentModalIsOpen, setCommentModalIsOpen] = useState(false)
+  const handleClose = () => setCommentModalIsOpen(false)
   const id = Number(router.query.id)
 
   const { data: message, status } = useMessage(id)
@@ -40,31 +25,38 @@ const MessagePage = () => {
         return (
           <>
             {commentModalIsOpen && (
-              <Modal handleClose={() => setCommentModalIsOpen(false)}>
-                <MessageForm
-                  placeHolder="Reply to this tweet"
-                  onTweet={() => setCommentModalIsOpen(false)}
-                  replyTo={message.id}
-                />
+              <Modal show={commentModalIsOpen} onHide={handleClose}>
+                <Modal.Header closeButton />
+                <Modal.Body>
+                  {' '}
+                  <MessageForm
+                    placeHolder="Reply to this tweet"
+                    onTweet={handleClose}
+                    replyTo={message.id}
+                  />
+                </Modal.Body>
               </Modal>
             )}
-            <StyledBottomMarginWrapper>
-              <StyledMessageWrapper>
+            <div className="border-bottom">
+              <Message message={message}>
+                <Row className="my-2">
+                  <Col xs={8}></Col>
+                  <Col xs={2}>
+                    <Button
+                      className="custom-link-over-stretched-link"
+                      onClick={() => setCommentModalIsOpen(true)}
+                    >
+                      Reply
+                    </Button>
+                  </Col>
+                </Row>
+              </Message>
+            </div>
+            {message.replies.map((message) => (
+              <div className=" border-bottom" key={message.id}>
                 <Message message={message} />
-                <StyledButtonsWrapper>
-                  <Button
-                    onClick={() => setCommentModalIsOpen(true)}
-                    width=""
-                    padding="12px 30px"
-                  >
-                    Reply
-                  </Button>
-                </StyledButtonsWrapper>
-              </StyledMessageWrapper>
-            </StyledBottomMarginWrapper>
-            {message.replies.length > 0 && (
-              <MessageList messages={message.replies} />
-            )}
+              </div>
+            ))}
           </>
         )
       else throw new Error('Cannot fetch message')

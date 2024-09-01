@@ -1,16 +1,9 @@
 import { useQueryClient } from 'react-query'
 import { MessageForm } from '../src/components/messageForm'
-import { MessageList } from '../src/components/messageList'
 import { useMessages } from '../src/resources/message'
 import { useChannel, useEvent } from '@harelpls/use-pusher'
-import styled from 'styled-components'
-import { StyledBottomMarginWrapper } from '../styles/common'
 import { NextPage } from 'next'
-
-const StyledWrapper = styled.div`
-  padding: 15px;
-  display: flex;
-`
+import { Message } from '../src/components/message'
 
 export const TwatterHome: NextPage = () => {
   const { data: messages, status: status } = useMessages()
@@ -36,12 +29,14 @@ export const TwatterHome: NextPage = () => {
 
       return (
         <>
-          <StyledBottomMarginWrapper>
-            <StyledWrapper>
-              <MessageForm placeHolder="What's happening?" />
-            </StyledWrapper>
-          </StyledBottomMarginWrapper>
-          <MessageList messages={nonReplyMessages} />
+          <div className="p-3 border-bottom">
+            <MessageForm placeHolder="What's happening?" />
+          </div>
+          {nonReplyMessages.map((message) => (
+            <div className="border-bottom" key={message.id}>
+              <Message message={message} />
+            </div>
+          ))}
         </>
       )
     }

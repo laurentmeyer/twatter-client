@@ -1,3 +1,6 @@
+* faire apparaitre la section dans laquelle on est (via le bouton de navigation)
+* changer le messageForm et ne pas lui faire prendre 100% systématiquement
+
 * do login page with fetched logo
 * add a preview for image upload
 

@@ -2,31 +2,9 @@ import React from 'react'
 import ReactMarkdown from 'react-markdown'
 import { ArticleResource } from '../resources/article'
 import styles from '../../styles/markdown-styles.module.css'
-import styled from 'styled-components'
-import Image from 'next/image'
+import Image from 'react-bootstrap/Image'
 import remarkUnwrapImages from 'remark-unwrap-images'
-
-/*
- * Styles.
- */
-
-const StyledWrapper = styled.div`
-  display: grid;
-  padding: 0 20px;
-`
-
-const StyledHeader = styled.h1`
-  justify-self: center;
-  text-align: center;
-  font-size: 2rem;
-`
-
-const StyledSourceLogoWrapper = styled.div`
-  width: 200px;
-  height: 150px;
-  position: relative;
-  justify-self: center;
-`
+import { Col, Row } from 'react-bootstrap'
 
 /*
  * Types.
@@ -44,18 +22,19 @@ export const Article = ({ article }: ArticleProps) => {
   const { source } = article
 
   return (
-    <StyledWrapper>
+    <div className="d-grid py-5">
       {source && source.logo && (
-        <StyledSourceLogoWrapper>
-          <Image
-            src={source.logo.url}
-            alt={source.logo.alternativeText}
-            fill
-            objectFit="contain"
-          />
-        </StyledSourceLogoWrapper>
+        <Row className="justify-content-evenly">
+          <Col xs={5}>
+            <Image
+              src={source.logo.url}
+              alt={source.logo.alternativeText}
+              fluid
+            />
+          </Col>
+        </Row>
       )}
-      <StyledHeader>{article.title}</StyledHeader>
+      <h2 className="text-center my-3">{article.title}</h2>
       <ReactMarkdown
         className={styles.reactMarkDown}
         remarkPlugins={[remarkUnwrapImages]}
@@ -63,6 +42,6 @@ export const Article = ({ article }: ArticleProps) => {
       >
         {article.content}
       </ReactMarkdown>
-    </StyledWrapper>
+    </div>
   )
 }
