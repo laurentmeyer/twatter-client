@@ -43,7 +43,7 @@ const fetchCurrentUserAsync = async (jwt: string | undefined) => {
   if (!jwt) return undefined
 
   const { data } = await axios.get(
-    getStrapiURL(`/api/users/me?populate[0]=author`),
+    getStrapiURL(`/api/users/me?populate[0]=author&populate[1]=author.image`),
     {
       headers: { Authorization: `Bearer ${jwt}` },
     }

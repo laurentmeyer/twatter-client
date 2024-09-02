@@ -37,19 +37,26 @@ export const Author = ({ author }: Props) => {
       <div className="border-bottom">
         <Image
           className="w-100"
-          style={{ height: 200 }}
+          style={{ height: 200, objectFit: 'cover' }}
           src={backgroundUrl || '/background.jpg'}
           alt={'background'}
           fluid
         />
-        <div>
+        <div
+          style={{
+            height: 120,
+            width: 120,
+            margin: '-60px 0 12px 12px',
+          }}
+        >
           <Image
             style={{
-              height: 120,
+              height: '100%',
+              width: '100%',
+              objectFit: 'cover',
               border: '4px solid white',
               borderRadius: '50%',
               backgroundColor: 'grey',
-              margin: '-60px 0 0 12px',
             }}
             src={imageUrl || '/empty.jpeg'}
             alt={imageAlt || handle}

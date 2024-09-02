@@ -78,7 +78,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         </Navbar.Collapse>
       </Navbar>
       <Row>
-        <Col className="d-none d-md-block px-5" md={4} lg={3}>
+        <Col className="d-none d-md-block ps-5" md={4} lg={3}>
           <Nav defaultActiveKey="/home" className="d-grid gap-0 row-gap-2">
             <Nav.Item>
               <Image

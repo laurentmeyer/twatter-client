@@ -1,5 +1,6 @@
 import { MessageResource } from '../resources/message'
 import Image from 'react-bootstrap/Image'
+
 import { DateTime } from 'luxon'
 import Link from 'next/link'
 import { ReactNode } from 'react'
@@ -8,6 +9,8 @@ import { useQueryClient } from 'react-query'
 import Col from 'react-bootstrap/Col'
 import Row from 'react-bootstrap/Row'
 import { ChatFill, HeartFill } from 'react-bootstrap-icons'
+import { Container } from 'react-bootstrap'
+import { ProfileImage } from './profileImage'
 
 /*
  * Types.
@@ -81,15 +84,10 @@ export const Message = ({ message, children }: Props) => {
   )
 
   return (
-    <div className="position-relative py-2 custom-hover-background">
+    <Container className="position-relative py-2 custom-hover-background">
       <Row>
-        <Col xs={2}>
-          <Image
-            fluid
-            roundedCircle
-            src={authorImageUrl}
-            alt={authorImageAlt}
-          />
+        <Col xs={2} className={message.isReply ? 'px-3' : ''}>
+          <ProfileImage src={authorImageUrl} alt={authorImageAlt} />
         </Col>
         <Col className="d-grid gap-0 row-gap-2">
           <div className="d-flex">
@@ -105,7 +103,7 @@ export const Message = ({ message, children }: Props) => {
       </Row>
       {children}
       {messageLink}
-    </div>
+    </Container>
   )
 }
 

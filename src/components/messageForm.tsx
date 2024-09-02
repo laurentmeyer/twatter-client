@@ -2,12 +2,12 @@ import axios from 'axios'
 import { useSession } from 'next-auth/react'
 import { getStrapiURL } from '../../lib/api'
 import { useCurrentUser } from '../resources/user'
-import Image from 'react-bootstrap/Image'
 import { useState } from 'react'
 import { useQueryClient } from 'react-query'
 import Button from 'react-bootstrap/Button'
 import { CardImage } from 'react-bootstrap-icons'
 import { Col, Row } from 'react-bootstrap'
+import { ProfileImage } from './profileImage'
 
 /*
  * Types.
@@ -17,10 +17,6 @@ interface Preview {
   image: string
   file: File | null
 }
-
-/*
- * Styles.
- */
 
 /*
  * Props.
@@ -47,6 +43,7 @@ export const MessageForm = ({
 
   const { data: sessionData } = useSession()
   const { data: user } = useCurrentUser(sessionData?.jwt)
+
   const queryClient = useQueryClient()
 
   const addTweet = async () => {
@@ -73,9 +70,7 @@ export const MessageForm = ({
       console.error(error)
     }
 
-    // todo: chose between two versions depending on reactivity
     queryClient.invalidateQueries(['messages', 'list'])
-    // setTimeout(() => queryClient.invalidateQueries(['messages', 'list']), 1000)
 
     setIsSendDisabled(false)
     setText('')
@@ -101,9 +96,7 @@ export const MessageForm = ({
     <>
       <Row>
         <Col xs={2}>
-          <Image
-            fluid
-            roundedCircle
+          <ProfileImage
             src={user?.author.imageUrl || '/empty.jpeg'}
             alt={user?.author.imageAlt || user?.author.handle || 'alt'}
           />
