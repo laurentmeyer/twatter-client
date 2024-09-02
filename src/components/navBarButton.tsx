@@ -9,6 +9,7 @@ import Row from 'react-bootstrap/Row'
 
 interface Props {
   label: string
+  variant?: string
   onClick: () => void
   iconName: keyof typeof icons
 }
@@ -17,12 +18,21 @@ interface Props {
  * Component.
  */
 
-export const NavBarButton = ({ iconName, label, onClick }: Props) => {
+export const NavBarButton = ({
+  iconName,
+  variant = 'light',
+  label,
+  onClick,
+}: Props) => {
   const Icon = icons[iconName]
 
   return (
-    <Button className={'fw-bold fs-5 d-flex'} variant="light" onClick={onClick}>
-      <Row className="px-3">
+    <Button
+      className={'fw-bold fs-5 d-flex '}
+      variant={variant}
+      onClick={onClick}
+    >
+      <Row className="px-2">
         <Col className="col-md-auto">
           <Icon size={24} />
         </Col>

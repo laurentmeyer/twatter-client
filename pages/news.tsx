@@ -52,7 +52,7 @@ const ArticleCard = ({ article }: { article: ArticleResource }) => {
   const sourceImageAlt = source?.icon?.alternativeText || ''
 
   return (
-    <Container className="position-relative py-2">
+    <Container className="position-relative p-4">
       <div className="d-flex align-items-end">
         <div style={{ width: 16 }}>
           <Image

@@ -2,7 +2,6 @@ import { ReactNode } from 'react'
 import React from 'react'
 import { signOut, useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
-import Button from 'react-bootstrap/Button'
 import Navbar from 'react-bootstrap/Navbar'
 import Col from 'react-bootstrap/Col'
 import Nav from 'react-bootstrap/Nav'
@@ -51,11 +50,13 @@ export default function Layout({ children }: { children: ReactNode }) {
       onClick={() => router.push(`/authors/${userData?.author.id}`)}
     />
   )
-
   const signOutButton = (
-    <Button variant="primary" onClick={() => signOut()}>
-      Sign out
-    </Button>
+    <NavBarButton
+      iconName="BoxArrowLeft"
+      label="Exit"
+      variant="primary"
+      onClick={() => signOut()}
+    />
   )
 
   const navButtons = (
@@ -72,13 +73,13 @@ export default function Layout({ children }: { children: ReactNode }) {
       <Navbar className="bg-body-tertiary d-md-none">
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="w-100 justify-content-around d-flex align-items-center">
+          <Nav className="w-100 p-3 justify-content-around d-flex align-items-center">
             {navButtons}
           </Nav>
         </Navbar.Collapse>
       </Navbar>
       <Row>
-        <Col className="d-none d-md-block ps-5" md={4} lg={3}>
+        <Col className="d-none d-md-block ps-5" md={4} lg={3} xl={2}>
           <Nav defaultActiveKey="/home" className="d-grid gap-0 row-gap-2">
             <Nav.Item>
               <Image
