@@ -22,7 +22,7 @@ export const Article = ({ article }: ArticleProps) => {
   const { source } = article
 
   return (
-    <div className="d-grid py-5">
+    <div className="d-grid p-4">
       {source && source.logo && (
         <Row className="justify-content-evenly">
           <Col xs={5}>
