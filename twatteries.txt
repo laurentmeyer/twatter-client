@@ -1,3 +1,9 @@
+- liste articles: police plus grande
+- twitter => X
+- images paysage
+- avatar de message plus petit
+
+
 * faire apparaitre la section dans laquelle on est (via le bouton de navigation)
 * changer le messageForm et ne pas lui faire prendre 100% systématiquement
 

@@ -8,15 +8,7 @@ import Button from 'react-bootstrap/Button'
 import { CardImage } from 'react-bootstrap-icons'
 import { Col, Row } from 'react-bootstrap'
 import { ProfileImage } from './profileImage'
-
-/*
- * Types.
- */
-
-interface Preview {
-  image: string
-  file: File | null
-}
+import loadImage from 'blueimp-load-image'
 
 /*
  * Props.
@@ -39,14 +31,14 @@ export const MessageForm = ({
 }: MessageFormProps) => {
   const [text, setText] = useState('')
   const [isSendDisabled, setIsSendDisabled] = useState(true)
-  const [preview, setPreview] = useState<Preview>({ image: '', file: null })
+  const [imageFile, setImageFile] = useState<File>()
 
   const { data: sessionData } = useSession()
   const { data: user } = useCurrentUser(sessionData?.jwt)
 
   const queryClient = useQueryClient()
 
-  const addTweet = async () => {
+  const onSendTweet = async () => {
     setIsSendDisabled(true)
     const data = {
       author: user?.author.id,
@@ -58,9 +50,7 @@ export const MessageForm = ({
 
     formData.append('data', JSON.stringify(data))
 
-    const { file } = preview
-
-    if (file) formData.append(`files.image`, file, file.name)
+    if (imageFile) formData.append(`files.image`, imageFile, imageFile.name)
 
     try {
       await axios.post(getStrapiURL(`/api/messages/`), formData, {
@@ -74,22 +64,23 @@ export const MessageForm = ({
 
     setIsSendDisabled(false)
     setText('')
-    setPreview({ image: '', file: null })
+    setImageFile(undefined)
     if (onTweet) onTweet()
   }
 
-  const handlePhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onAddImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files && e.target.files[0]
 
     if (!file) return
 
-    const reader = new FileReader()
-    reader.readAsDataURL(file)
+    const data = await loadImage(file, { canvas: true })
+    const canvas = data.image as HTMLCanvasElement
 
-    reader.onloadend = () => {
-      if (typeof reader.result === 'string')
-        setPreview({ image: reader.result, file })
-    }
+    canvas.toBlob((blob) => {
+      if (!blob) return
+
+      setImageFile(new File([blob], file.name))
+    })
   }
 
   return (
@@ -121,10 +112,10 @@ export const MessageForm = ({
           id="photo"
           name="photo"
           accept="image/*"
-          onChange={handlePhoto}
+          onChange={onAddImage}
           style={{ display: 'none' }}
         />
-        <Button onClick={addTweet} disabled={isSendDisabled}>
+        <Button onClick={onSendTweet} disabled={isSendDisabled}>
           Tweet
         </Button>
       </div>
