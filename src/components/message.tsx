@@ -83,10 +83,14 @@ export const Message = ({ message, children }: Props) => {
     </div>
   )
 
+  const containerClassName = isReply
+    ? 'position-relative py-2'
+    : 'position-relative py-2 custom-hover-background'
+
   return (
-    <Container className="position-relative py-2 custom-hover-background">
+    <Container className={containerClassName}>
       <Row>
-        <Col xs={2} className={message.isReply ? 'px-3' : ''}>
+        <Col xs={3} md={2} className="px-4">
           <ProfileImage src={authorImageUrl} alt={authorImageAlt} />
         </Col>
         <Col className="d-grid gap-0 row-gap-2">
@@ -98,7 +102,7 @@ export const Message = ({ message, children }: Props) => {
           </div>
           {tokenize(text)}
           {messageImage}
-          {actionsRow}
+          {!isReply && actionsRow}
         </Col>
       </Row>
       {children}

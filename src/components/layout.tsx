@@ -27,10 +27,10 @@ export default function Layout({ children }: { children: ReactNode }) {
   if (sessionStatus === 'unauthenticated')
     return <>{'Error: unable to authenticate current user.'}</>
 
-  const twitterButton = (
+  const twitterXButton = (
     <NavBarButton
       iconName="TwitterX"
-      label="Twitter"
+      label="X"
       onClick={() => router.push('/')}
     />
   )
@@ -61,7 +61,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 
   const navButtons = (
     <>
-      {twitterButton}
+      {twitterXButton}
       {googleButton}
       {profileButton}
       {signOutButton}

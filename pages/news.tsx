@@ -62,7 +62,7 @@ const ArticleCard = ({ article }: { article: ArticleResource }) => {
             alt={sourceImageAlt}
           />
         </div>
-        <div className="ms-1 text-dark text-opacity-75 small">{sourceName}</div>
+        <div className="ms-1 text-dark text-opacity-75">{sourceName}</div>
       </div>
       <Row>
         <Col className="d-grid">
@@ -72,14 +72,12 @@ const ArticleCard = ({ article }: { article: ArticleResource }) => {
           >
             {article.title}
           </Link>
-          <div className="custom-article-excerpt small">
+          <div className="custom-article-excerpt">
             {RemoveMarkdown(article.content, {
               useImgAltText: false,
             })}
           </div>
-          <div className="text-secondary text-opacity-75 small">
-            {delayMessage}
-          </div>
+          <div className="text-secondary text-opacity-75">{delayMessage}</div>
         </Col>
         <Col xs={2}>
           {thumbnail && (
