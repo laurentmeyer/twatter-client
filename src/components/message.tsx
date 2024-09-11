@@ -8,7 +8,7 @@ import { useChannel, useEvent } from '@harelpls/use-pusher'
 import { useQueryClient } from 'react-query'
 import Col from 'react-bootstrap/Col'
 import Row from 'react-bootstrap/Row'
-import { ChatFill, HeartFill } from 'react-bootstrap-icons'
+import { ChatFill, HeartFill, Repeat } from 'react-bootstrap-icons'
 import { Container } from 'react-bootstrap'
 import { ProfileImage } from './profileImage'
 
@@ -18,6 +18,7 @@ import { ProfileImage } from './profileImage'
 
 interface Props {
   message: MessageResource
+  retweetSrc?: MessageResource
   children?: ReactNode
 }
 
@@ -25,8 +26,8 @@ interface Props {
  * Component.
  */
 
-export const Message = ({ message, children }: Props) => {
-  const { text, author, image, isReply, id } = message
+export const Message = ({ message, retweetSrc, children }: Props) => {
+  const { text, author, image, isReply, id, isRetweetOf } = message
   const queryClient = useQueryClient()
   const channel = useChannel('messages')
 
@@ -59,6 +60,10 @@ export const Message = ({ message, children }: Props) => {
     <Link href={`/messages/${id}`} className="stretched-link" />
   )
 
+  const retweetedMessageLink = retweetSrc && author && (
+    <Link href={`/messages/${id}`} className="stretched-link" />
+  )
+
   const messageImage = image && (
     <div className="custom-message-image-container border rounded bg-light text-center">
       <Image
@@ -71,11 +76,17 @@ export const Message = ({ message, children }: Props) => {
   )
 
   const actionsRow = (
-    <div className="d-flex justify-content-evenly text-secondary">
+    <div className="d-flex justify-content-around text-secondary">
       <span>
         <ChatFill className="me-1" />
         {message.replies.length}
       </span>
+      {!isRetweetOf && (
+        <span>
+          <Repeat className="me-1" />
+          {message.retweets.length}
+        </span>
+      )}
       <span>
         <HeartFill className="me-1" />
         {message.likesCount}
@@ -86,6 +97,29 @@ export const Message = ({ message, children }: Props) => {
   const containerClassName = isReply
     ? 'position-relative py-2'
     : 'position-relative py-2 custom-hover-background'
+
+  if (retweetSrc) {
+    return (
+      <Container className="custom-retweet-container border rounded-2 p-1">
+        <Row className="m-0">
+          <Col xs={1} className="p-1 ms-2">
+            <ProfileImage src={authorImageUrl} alt={authorImageAlt} />
+          </Col>
+          <Col className="d-flex align-items-end p-1">
+            {authorLink}
+            <div className="ms-1 text-secondary text-opacity-75">
+              {authorHandle} {messageTime}
+            </div>
+          </Col>
+        </Row>
+        <Row className="m-2">
+          {tokenizeTweetText(text)}
+          {messageImage}
+        </Row>
+        {retweetedMessageLink}
+      </Container>
+    )
+  }
 
   return (
     <Container className={containerClassName}>
@@ -100,8 +134,11 @@ export const Message = ({ message, children }: Props) => {
               {authorHandle} {messageTime}
             </div>
           </div>
-          {tokenize(text)}
+          {tokenizeTweetText(text)}
           {messageImage}
+          {isRetweetOf && (
+            <Message retweetSrc={message} message={isRetweetOf} />
+          )}
           {!isReply && actionsRow}
         </Col>
       </Row>
@@ -115,7 +152,7 @@ export const Message = ({ message, children }: Props) => {
  * Helpers.
  */
 
-function tokenize(text: string): ReactNode {
+function tokenizeTweetText(text: string): ReactNode {
   const regexp =
     /(https?:\/\/[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b[-a-zA-Z0-9()@:%_\+.~#?&//=]*)/g
 

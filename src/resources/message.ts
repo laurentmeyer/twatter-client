@@ -18,10 +18,12 @@ export interface MessagePayload {
   text: string
   time: string
   replyTo?: MessagePayload | null
+  replies?: ReadonlyArray<MessagePayload>
+  isRetweetOf?: MessagePayload | null
+  retweets?: ReadonlyArray<MessagePayload>
   likesCount?: number
   author?: AuthorPayload
   image?: ImagePayload
-  replies?: ReadonlyArray<MessagePayload>
 }
 
 export interface MessageResource {
@@ -29,10 +31,12 @@ export interface MessageResource {
   text: string
   time: DateTime
   likesCount: number
-  isReply: boolean
   author?: AuthorResource
   image?: ImageResource
+  isReply: boolean
   replies: ReadonlyArray<MessageResource>
+  isRetweetOf?: MessageResource
+  retweets: ReadonlyArray<MessageResource>
 }
 
 /*

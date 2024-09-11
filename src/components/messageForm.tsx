@@ -17,6 +17,9 @@ import loadImage from 'blueimp-load-image'
 interface MessageFormProps {
   placeHolder: string
   replyTo?: number
+  isRetweetOf?: number
+  allowImage?: boolean
+
   onTweet?: () => void
 }
 
@@ -27,7 +30,9 @@ interface MessageFormProps {
 export const MessageForm = ({
   placeHolder,
   replyTo,
+  isRetweetOf,
   onTweet,
+  allowImage = true,
 }: MessageFormProps) => {
   const [text, setText] = useState('')
   const [isSendDisabled, setIsSendDisabled] = useState(true)
@@ -44,6 +49,7 @@ export const MessageForm = ({
       author: user?.author.id,
       text,
       replyTo,
+      isRetweetOf,
     }
 
     const formData = new FormData()
@@ -104,17 +110,21 @@ export const MessageForm = ({
         }}
       />
       <div className="d-flex gap-3 justify-content-end align-items-center">
-        <label htmlFor="photo">
-          <CardImage size={24} className="text-primary" />
-        </label>
-        <input
-          type="file"
-          id="photo"
-          name="photo"
-          accept="image/*"
-          onChange={onAddImage}
-          style={{ display: 'none' }}
-        />
+        {allowImage && (
+          <>
+            <label htmlFor="photo">
+              <CardImage size={24} className="text-primary" />
+            </label>
+            <input
+              type="file"
+              id="photo"
+              name="photo"
+              accept="image/*"
+              onChange={onAddImage}
+              style={{ display: 'none' }}
+            />
+          </>
+        )}
         <Button onClick={onSendTweet} disabled={isSendDisabled}>
           Tweet
         </Button>

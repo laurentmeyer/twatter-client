@@ -70,6 +70,8 @@ export const messagePayloadToResource = (
     likesCount = 0,
     replies = [],
     replyTo,
+    isRetweetOf = undefined,
+    retweets = [],
   } = data
 
   return {
@@ -81,6 +83,10 @@ export const messagePayloadToResource = (
     author: author && authorPayloadToResource(author),
     isReply: Boolean(replyTo),
     replies: replies.map(messagePayloadToResource).filter(isDefined),
+    isRetweetOf: isRetweetOf
+      ? messagePayloadToResource(isRetweetOf)
+      : undefined,
+    retweets: retweets.map(messagePayloadToResource).filter(isDefined),
   }
 }
 
